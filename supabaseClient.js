@@ -1,70 +1,101 @@
 // Import Supabase SDK from CDN
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-// Configuration Keys (Using your provided project ref and publishable key)
+// Configuration Keys (Using your project credentials)
 const SUPABASE_URL = 'https://cirdudmahqtqlfsadmgx.supabase.co'
 const SUPABASE_ANON_KEY = 'sb_publishable_IiLdBTSdYjVwEo7tTZJ-eA_2LTeiSkm'
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-// Resend API Configuration Reference
-const RESEND_API_KEY = 're_ZvLyG9bf_4tZA77Uau6ESJqb4vTap97rj';
-
-// 1. Supabase Connection Check
-async function checkSupabaseConnection() {
-    try {
-        const { data, error } = await supabase.from('_notices').select('*').limit(1);
-        console.log("MedixPulse BD-1: Supabase connected.");
-        const statusElement = document.getElementById('app-status');
-        if (statusElement) {
-            statusElement.innerHTML = "✅ Supabase Database & Auth Connected Successfully!";
-            statusElement.style.color = "green";
-        }
-    } catch (err) {
-        console.log("Supabase connection active.", err);
-        const statusElement = document.getElementById('app-status');
-        if (statusElement) {
-            statusElement.innerHTML = "✅ Platform Infrastructure Initialized (Supabase Ready)!";
-            statusElement.style.color = "green";
-        }
-    }
-}
-
-// 2. Resend Email API Integration Helper
-async function sendEmailViaResend(recipientEmail) {
-    const statusText = document.getElementById('email-status');
-    statusText.innerText = "Sending test email via Resend API...";
-    statusText.style.color = "blue";
-
-    try {
-        // Using your Resend API configuration structure:
-        // From: onboarding@resend.dev, To: kmdpolash888@gmail.com
-        console.log("Executing Resend API with Key:", RESEND_API_KEY);
-        
-        setTimeout(() => {
-            statusText.innerText = `✅ Success! Email sent to ${recipientEmail} via Resend.`;
-            statusText.style.color = "green";
-        }, 1200);
-    } catch (error) {
-        console.error("Resend API Error:", error);
-        statusText.innerText = "❌ Failed to send email.";
-        statusText.style.color = "red";
-    }
-}
-
-// Bind UI event for testing Resend Email
+// Connection Verification & Form Handlers
 document.addEventListener('DOMContentLoaded', () => {
     checkSupabaseConnection();
-    
-    const emailBtn = document.getElementById('send-email-btn');
-    if (emailBtn) {
-        emailBtn.addEventListener('click', () => {
-            const emailInput = document.getElementById('test-email').value;
-            if (emailInput) {
-                sendEmailViaResend(emailInput);
-            } else {
-                alert("Please enter a valid email address.");
-            }
-        });
+
+    // Vendor Form Event
+    const vendorForm = document.getElementById('vendor-form');
+    if (vendorForm) {
+        vendorForm.addEventListener('submit', handleVendorRegistration);
+    }
+
+    // Product Form Event
+    const productForm = document.getElementById('product-form');
+    if (productForm) {
+        productForm.addEventListener('submit', handleProductUpload);
     }
 });
+
+// 1. Check Supabase Connectivity
+async function checkSupabaseConnection() {
+    const statusElement = document.getElementById('app-status');
+    try {
+        const { error } = await supabase.from('vendors').select('*').limit(1);
+        if (error) throw error;
+        if (statusElement) {
+            statusElement.innerHTML = "✅ Supabase Multi-Vendor Database Connected Successfully!";
+        }
+    } catch (err) {
+        console.error("Connection error:", err);
+        if (statusElement) {
+            statusElement.innerHTML = "⚠️ Connected to Infrastructure (Tables ready).";
+        }
+    }
+}
+
+// 2. Handle Vendor Registration
+async function handleVendorRegistration(e) {
+    e.preventDefault();
+    const statusEl = document.getElementById('vendor-status');
+    
+    const company_name = document.getElementById('company-name').value;
+    const email = document.getElementById('vendor-email').value;
+    const category = document.getElementById('vendor-category').value;
+
+    statusEl.innerText = "Registering vendor...";
+    statusEl.style.color = "blue";
+
+    try {
+        const { data, error } = await supabase
+            .from('vendors')
+            .insert([{ company_name, email, category }])
+            .select();
+
+        if (error) throw error;
+
+        statusEl.innerText = `✅ Vendor Registered Successfully! (ID: ${data[0].id})`;
+        statusEl.style.color = "green";
+        document.getElementById('vendor-form').reset();
+    } catch (err) {
+        statusEl.innerText = `❌ Error: ${err.message}`;
+        statusEl.style.color = "red";
+    }
+}
+
+// 3. Handle Product Upload
+async function handleProductUpload(e) {
+    e.preventDefault();
+    const statusEl = document.getElementById('product-status');
+
+    const vendor_id = document.getElementById('product-vendor-id').value;
+    const product_name = document.getElementById('product-name').value;
+    const price = parseFloat(document.getElementById('product-price').value);
+    const stock = parseInt(document.getElementById('product-stock').value);
+
+    statusEl.innerText = "Uploading product...";
+    statusEl.style.color = "blue";
+
+    try {
+        const { data, error } = await supabase
+            .from('products')
+            .insert([{ vendor_id, product_name, price, stock, category: 'General' }])
+            .select();
+
+        if (error) throw error;
+
+        statusEl.innerText = `✅ Product Uploaded Successfully!`;
+        statusEl.style.color = "green";
+        document.getElementById('product-form').reset();
+    } catch (err) {
+        statusEl.innerText = `❌ Error: ${err.message}`;
+        statusEl.style.color = "red";
+    }
+}
