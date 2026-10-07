@@ -5,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MedixPulse BD-1 - Global Healthcare & Medicine Marketplace</title>
     
-    <!-- Meta Pixel Code (Server-side & Client-side tracking ready) -->
+    <!-- Meta Pixel Code -->
     <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._l)f._l=1;n.async=!0;n.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(s,t)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', 'YOUR_META_PIXEL_ID'); 
-      fbq('track', 'PageView');
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1079271335006497');
+    fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=YOUR_META_PIXEL_ID&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=1079271335006497&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Meta Pixel Code -->
 
@@ -27,22 +29,29 @@
         .container { max-width: 1200px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         h1 { margin: 0 0 10px; }
         p { color: #555; }
+        .btn { background: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>MedixPulse BD-1</h1>
-        <p>Your Trusted Global Multi-Vendor Healthcare & Medicine Marketplace</p>
+        <p>Global Multi-Vendor Healthcare & Medicine Marketplace</p>
     </header>
 
     <div class="container">
-        <h2>Welcome to the Future of Global Healthcare</h2>
-        <p>Connecting top pharmaceutical companies, natural remedies, and vendors worldwide with customers seamlessly.</p>
-        <div id="app-status">Loading platform infrastructure...</div>
+        <h2>Welcome to MedixPulse BD-1</h2>
+        <p>Connecting international pharmaceutical giants and vendors worldwide.</p>
+        <div id="app-status">Initializing platform infrastructure...</div>
+        
+        <hr style="margin: 20px 0;">
+        <h3>Test Email Notification (Resend API)</h3>
+        <input type="email" id="test-email" value="kmdpolash888@gmail.com" placeholder="Enter your email" style="padding: 8px; width: 250px;">
+        <button class="btn" id="send-email-btn">Send Test Email</button>
+        <p id="email-status" style="margin-top: 10px; font-weight: bold;"></p>
     </div>
 
-    <!-- Supabase Client Script Integration -->
+    <!-- Main Client Script -->
     <script type="module" src="./supabaseClient.js"></script>
 </body>
 </html>
