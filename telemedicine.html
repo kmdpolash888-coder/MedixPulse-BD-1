@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedixPulse-BD-1 | Telemedicine & Doctor Consultation</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- External Supabase Client File -->
+    <script src="supabaseClient.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white py-4 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">MedixPulse-BD-1 | Telemedicine</h1>
+            <div class="flex items-center gap-3">
+                <a href="wallet.html" class="text-sm bg-indigo-500 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition">Wallet</a>
+                <a href="index.html" class="text-sm bg-white text-indigo-600 font-semibold px-3 py-1.5 rounded-lg shadow-sm hover:bg-slate-100 transition">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Doctor Booking Form (Left Column) -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 space-y-4 h-fit">
+            <div class="border-b pb-3">
+                <h2 class="text-xl font-bold text-indigo-700">Book Doctor Appointment</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Schedule an HD video consultation instantly.</p>
+            </div>
+
+            <div id="booking-alert" class="hidden p-3 bg-emerald-100 text-emerald-700 text-xs rounded-lg"></div>
+
+            <form id="booking-form" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Patient Full Name</label>
+                    <input type="text" id="patient-name" required placeholder="e.g. Rahim Uddin" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Select Specialist Doctor</label>
+                    <select id="doctor-select" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white">
+                        <option value="Dr. Farhana Yasmin (Cardiologist)">Dr. Farhana Yasmin (Cardiologist)</option>
+                        <option value="Dr. Anisur Rahman (Neurologist)">Dr. Anisur Rahman (Neurologist)</option>
+                        <option value="Dr. Nusrat Jahan (General Physician)">Dr. Nusrat Jahan (General Physician)</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Consultation Date</label>
+                        <input type="date" id="consult-date" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Time Slot</label>
+                        <select id="consult-time" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white">
+                            <option value="10:00 AM - 10:30 AM">10:00 AM</option>
+                            <option value="03:00 PM - 03:30 PM">03:00 PM</option>
+                            <option value="08:00 PM - 08:30 PM">08:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Medical Symptoms / Note</label>
+                    <textarea id="patient-symptoms" rows="2" placeholder="Briefly describe your health issue..." class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+
+                <button type="submit" id="book-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition text-xs shadow-md">
+                    Confirm Appointment ($30 Fee)
+                </button>
+            </form>
+        </section>
+
+        <!-- Appointments List (Right 2 Columns) -->
+        <section class="lg:col-span-2 space-y-4">
+            <h2 class="text-xl font-bold text-slate-800">Your Scheduled Consultations</h2>
+            <div id="appointments-list" class="space-y-3">
+                <p class="text-slate-500 text-sm italic">Loading appointments...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 MedixPulse-BD-1. Enterprise Healthcare Ecosystem.
+    </footer>
+
+    <!-- Telemedicine Logic Script -->
+    <script>
+        const bookingForm = document.getElementById('booking-form');
+        const bookingAlert = document.getElementById('booking-alert');
+        const bookBtn = document.getElementById('book-btn');
+        const appointmentsContainer = document.getElementById('appointments-list');
+
+        let appointments = JSON.parse(localStorage.getItem('medix_appointments')) || [
+            { doctor: 'Dr. Farhana Yasmin (Cardiologist)', date: '2026-06-15', time: '10:00 AM - 10:30 AM', status: 'Confirmed' }
+        ];
+
+        function renderAppointments() {
+            if (!appointments || appointments.length === 0) {
+                appointmentsContainer.innerHTML = '<p class="text-slate-500 text-sm italic">No scheduled appointments found.</p>';
+                return;
+            }
+
+            appointmentsContainer.innerHTML = appointments.map((app, index) => `
+                <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-800">${app.doctor}</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Date: <span class="font-semibold text-slate-700">${app.date}</span> (${app.time})</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-semibold">${app.status}</span>
+                        <button onclick="cancelApp(${index})" class="text-red-500 hover:text-red-700 text-xs font-medium">Cancel</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.cancelApp = function(index) {
+            appointments.splice(index, 1);
+            localStorage.setItem('medix_appointments', JSON.stringify(appointments));
+            renderAppointments();
+        };
+
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            bookBtn.disabled = true;
+            bookBtn.textContent = 'Booking Appointment...';
+
+            const patientName = document.getElementById('patient-name').value.trim();
+            const doctor = document.getElementById('doctor-select').value;
+            const date = document.getElementById('consult-date').value;
+            const time = document.getElementById('consult-time').value;
+            const symptoms = document.getElementById('patient-symptoms').value.trim();
+
+            try {
+                const newApp = { patientName, doctor, date, time, symptoms, status: 'Confirmed' };
+                appointments.unshift(newApp);
+                localStorage.setItem('medix_appointments', JSON.stringify(appointments));
+
+                // Sync with Supabase 'appointments' table if available
+                if (window._supabase) {
+                    const { error } = await window._supabase
+                        .from('appointments')
+                        .insert([newApp]);
+
+                    if (error) console.warn('Appointment sync warning:', error.message);
+                }
+
+                bookingAlert.textContent = 'Appointment booked successfully! Video link will be sent shortly.';
+                bookingAlert.classList.remove('hidden');
+                bookingForm.reset();
+                renderAppointments();
+
+            } catch (err) {
+                alert('Booking error: ' + err.message);
+            } finally {
+                bookBtn.disabled = false;
+                bookBtn.textContent = 'Confirm Appointment ($30 Fee)';
+            }
+        });
+
+        renderAppointments();
+    </script>
+</body>
+</html>
