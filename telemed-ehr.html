@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedixPulse-BD-1 | Next-Gen Telemedicine & EHR</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- External Supabase Client File -->
+    <script src="supabaseClient.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white py-4 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">MedixPulse-BD-1 | M14 Telemed & EHR</h1>
+            <div class="flex items-center gap-3">
+                <a href="crm-engagement.html" class="text-sm bg-indigo-500 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition">Module 13</a>
+                <a href="index.html" class="text-sm bg-white text-indigo-600 font-semibold px-3 py-1.5 rounded-lg shadow-sm hover:bg-slate-100 transition">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- EHR & Video Consult Setup Form (Left Column) -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 space-y-4 h-fit">
+            <div class="border-b pb-3">
+                <h2 class="text-xl font-bold text-indigo-700">EHR & Video Consultation</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Create secure WebRTC session & digital Rx vault.</p>
+            </div>
+
+            <div id="m14-alert" class="hidden p-3 bg-emerald-100 text-emerald-700 text-xs rounded-lg"></div>
+
+            <form id="ehr-form" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Patient Full Name</label>
+                    <input type="text" id="ehr-patient" required placeholder="e.g. Tanvir Ahmed" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Consulting Specialist</label>
+                    <input type="text" id="ehr-doctor" required placeholder="e.g. Dr. Farhana Yasmin (Cardiologist)" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Session Type</label>
+                    <select id="ehr-type" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white">
+                        <option value="HD Video Consultation (WebRTC)">HD Video Consultation (WebRTC)</option>
+                        <option value="Second Opinion Medical Board Review">Second Opinion Medical Board Review</option>
+                        <option value="EHR Vault Diagnosis Upload">EHR Vault Diagnosis Upload</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Diagnosis & Prescription Summary</label>
+                    <textarea id="ehr-notes" rows="2" required placeholder="Write clinical diagnosis & Rx..." class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+
+                <button type="submit" id="m14-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition text-xs shadow-md">
+                    Initialize Secure Session & Rx
+                </button>
+            </form>
+        </section>
+
+        <!-- EHR Vault & Consultations List (Right 2 Columns) -->
+        <section class="lg:col-span-2 space-y-4">
+            <h2 class="text-xl font-bold text-slate-800">Secure EHR Vault & Active Consultations</h2>
+            <div id="m14-list" class="space-y-3">
+                <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">Patient: Tanvir Ahmed (Dr. Farhana Yasmin)</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Type: HD Video Consultation (WebRTC) | Rx: Prescribed Seclo 20mg</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-semibold">Active Vault</span>
+                        <p class="text-[10px] text-slate-400 mt-1">QR Verified</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 MedixPulse-BD-1. Enterprise Healthcare Ecosystem.
+    </footer>
+
+    <!-- Module 14 Logic Script -->
+    <script>
+        const form = document.getElementById('ehr-form');
+        const alertBox = document.getElementById('m14-alert');
+        const btn = document.getElementById('m14-btn');
+        const listContainer = document.getElementById('m14-list');
+
+        let ehrVault = JSON.parse(localStorage.getItem('medix_m14_ehr')) || [
+            { patient: 'Tanvir Ahmed', doctor: 'Dr. Farhana Yasmin', type: 'HD Video Consultation (WebRTC)', notes: 'Prescribed Seclo 20mg', status: 'Active Vault' }
+        ];
+
+        function renderM14List() {
+            if (!ehrVault || ehrVault.length === 0) {
+                listContainer.innerHTML = '<p class="text-slate-500 text-sm italic">No EHR vault records found.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = ehrVault.map((item, index) => `
+                <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">Patient: ${item.patient} (${item.doctor})</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Type: ${item.type} | Notes: ${item.notes}</p>
+                    </div>
+                    <div class="text-right flex items-center gap-3">
+                        <div>
+                            <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-semibold">${item.status}</span>
+                            <p class="text-[10px] text-slate-400 mt-1">QR Verified</p>
+                        </div>
+                        <button onclick="removeM14(${index})" class="text-red-500 hover:text-red-700 text-xs font-medium ml-2">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.removeM14 = function(index) {
+            ehrVault.splice(index, 1);
+            localStorage.setItem('medix_m14_ehr', JSON.stringify(ehrVault));
+            renderM14List();
+        };
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Securing Vault...';
+
+            const patient = document.getElementById('ehr-patient').value.trim();
+            const doctor = document.getElementById('ehr-doctor').value.trim();
+            const type = document.getElementById('ehr-type').value;
+            const notes = document.getElementById('ehr-notes').value.trim();
+
+            try {
+                const newItem = { patient, doctor, type, notes, status: 'Active Vault' };
+                ehrVault.unshift(newItem);
+                localStorage.setItem('medix_m14_ehr', JSON.stringify(ehrVault));
+
+                if (window._supabase) {
+                    await window._supabase.from('ehr_vault').insert([newItem]);
+                }
+
+                alertBox.textContent = 'Telemedicine session and EHR digital vault record created successfully!';
+                alertBox.classList.remove('hidden');
+                form.reset();
+                renderM14List();
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Initialize Secure Session & Rx';
+            }
+        });
+
+        renderM14List();
+    </script>
+</body>
+</html>
