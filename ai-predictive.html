@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedixPulse-BD-1 | AI & Predictive Healthcare</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- External Supabase Client File -->
+    <script src="supabaseClient.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white py-4 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">MedixPulse-BD-1 | M17 AI & Predictive Health</h1>
+            <div class="flex items-center gap-3">
+                <a href="fintech-escrow.html" class="text-sm bg-indigo-500 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition">Module 16</a>
+                <a href="index.html" class="text-sm bg-white text-indigo-600 font-semibold px-3 py-1.5 rounded-lg shadow-sm hover:bg-slate-100 transition">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- AI Model Analyzer Form (Left Column) -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 space-y-4 h-fit">
+            <div class="border-b pb-3">
+                <h2 class="text-xl font-bold text-indigo-700">Predictive AI Engine</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Run NLP symptom analysis & inventory demand forecasting.</p>
+            </div>
+
+            <div id="m17-alert" class="hidden p-3 bg-emerald-100 text-emerald-700 text-xs rounded-lg"></div>
+
+            <form id="ai-form" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Patient / Store Entity</label>
+                    <input type="text" id="ai-entity" required placeholder="e.g. Patient #9021 or Dhaka Hub" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">AI Task / Model Type</label>
+                    <select id="ai-model" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white">
+                        <option value="Advanced Symptom Risk Prediction">Advanced Symptom Risk Prediction</option>
+                        <option value="Prescription OCR Image Recognition">Prescription OCR Image Recognition</option>
+                        <option value="Inventory Demand Forecasting (Stock AI)">Inventory Demand Forecasting (Stock AI)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Clinical Note / Parameter Input</label>
+                    <textarea id="ai-input-data" rows="3" required placeholder="Enter symptoms or stock metrics for neural analysis..." class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+
+                <button type="submit" id="m17-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition text-xs shadow-md">
+                    Run AI Neural Analysis
+                </button>
+            </form>
+        </section>
+
+        <!-- AI Prediction Insights List (Right 2 Columns) -->
+        <section class="lg:col-span-2 space-y-4">
+            <h2 class="text-xl font-bold text-slate-800">AI Predictive Insights & Health Trends</h2>
+            <div id="m17-list" class="space-y-3">
+                <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">Entity: Patient #9021 (Symptom Risk Model)</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Finding: Low risk profile detected. Recommended hydration & rest.</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-semibold">AI Confidence: 96.4%</span>
+                        <p class="text-[10px] text-slate-400 mt-1">Model: NLP-Medix-v4</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 MedixPulse-BD-1. Enterprise Healthcare Ecosystem.
+    </footer>
+
+    <!-- Module 17 Logic Script -->
+    <script>
+        const form = document.getElementById('ai-form');
+        const alertBox = document.getElementById('m17-alert');
+        const btn = document.getElementById('m17-btn');
+        const listContainer = document.getElementById('m17-list');
+
+        let aiPredictions = JSON.parse(localStorage.getItem('medix_m17_ai')) || [
+            { entity: 'Patient #9021', model: 'Advanced Symptom Risk Prediction', findings: 'Low risk profile detected. Recommended hydration & rest.', confidence: '96.4%' }
+        ];
+
+        function renderM17List() {
+            if (!aiPredictions || aiPredictions.length === 0) {
+                listContainer.innerHTML = '<p class="text-slate-500 text-sm italic">No AI prediction records found.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = aiPredictions.map((item, index) => `
+                <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">Entity: ${item.entity} (${item.model})</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Finding: ${item.findings}</p>
+                    </div>
+                    <div class="text-right flex items-center gap-3">
+                        <div>
+                            <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-semibold">AI Confidence: ${item.confidence}</span>
+                            <p class="text-[10px] text-slate-400 mt-1">Model: NLP-Medix-v4</p>
+                        </div>
+                        <button onclick="removeM17(${index})" class="text-red-500 hover:text-red-700 text-xs font-medium ml-2">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.removeM17 = function(index) {
+            aiPredictions.splice(index, 1);
+            localStorage.setItem('medix_m17_ai', JSON.stringify(aiPredictions));
+            renderM17List();
+        };
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Running Neural AI...';
+
+            const entity = document.getElementById('ai-entity').value.trim();
+            const model = document.getElementById('ai-model').value;
+            const inputData = document.getElementById('ai-input-data').value.trim();
+
+            try {
+                // Simulate neural processing delay
+                await new Promise(r => setTimeout(r, 1000));
+
+                const findings = `Analyzed "${inputData.substring(0, 35)}..." - Optimal health metrics and predicted smooth recovery trend.`;
+                const confidence = (94 + Math.random() * 5).toFixed(1) + '%';
+
+                const newItem = { entity, model, findings, confidence };
+                aiPredictions.unshift(newItem);
+                localStorage.setItem('medix_m17_ai', JSON.stringify(aiPredictions));
+
+                if (window._supabase) {
+                    await window._supabase.from('ai_predictions').insert([newItem]);
+                }
+
+                alertBox.textContent = 'AI predictive neural analysis completed successfully!';
+                alertBox.classList.remove('hidden');
+                form.reset();
+                renderM17List();
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Run AI Neural Analysis';
+            }
+        });
+
+        renderM17List();
+    </script>
+</body>
+</html>
