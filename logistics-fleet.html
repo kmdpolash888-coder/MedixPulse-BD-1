@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedixPulse-BD-1 | Fleet Management & Smart Dispatch</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- External Supabase Client File -->
+    <script src="supabaseClient.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white py-4 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">MedixPulse-BD-1 | M15 Fleet & Dispatch</h1>
+            <div class="flex items-center gap-3">
+                <a href="telemed-ehr.html" class="text-sm bg-indigo-500 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition">Module 14</a>
+                <a href="index.html" class="text-sm bg-white text-indigo-600 font-semibold px-3 py-1.5 rounded-lg shadow-sm hover:bg-slate-100 transition">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Fleet Dispatch Form (Left Column) -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 space-y-4 h-fit">
+            <div class="border-b pb-3">
+                <h2 class="text-xl font-bold text-indigo-700">Assign Smart Dispatch</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Assign GPS rider & configure OTP delivery verification.</p>
+            </div>
+
+            <div id="m15-alert" class="hidden p-3 bg-emerald-100 text-emerald-700 text-xs rounded-lg"></div>
+
+            <form id="fleet-form" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Order ID / Reference</label>
+                    <input type="text" id="fleet-order" required placeholder="e.g. #ORD-9921" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Assigned Fleet Rider</label>
+                    <input type="text" id="fleet-rider" required placeholder="e.g. Jamal Hossain (Rider #04)" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Delivery Destination Area</label>
+                    <input type="text" id="fleet-destination" required placeholder="e.g. Dhanmondi 27, Dhaka" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Delivery Type</label>
+                        <select id="fleet-type" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white">
+                            <option value="Express Cold-Chain Delivery">Express Cold-Chain</option>
+                            <option value="Same-Day Standard">Same-Day Standard</option>
+                            <option value="Scheduled Pharmacy Drop">Scheduled Drop</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">OTP Verification</label>
+                        <input type="text" id="fleet-otp" value="8492" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono text-center font-bold text-indigo-600">
+                    </div>
+                </div>
+
+                <button type="submit" id="m15-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition text-xs shadow-md">
+                    Dispatch Fleet Rider
+                </button>
+            </form>
+        </section>
+
+        <!-- Active Fleet Dispatches List (Right 2 Columns) -->
+        <section class="lg:col-span-2 space-y-4">
+            <h2 class="text-xl font-bold text-slate-800">Active Fleet Dispatches & GPS Tracking</h2>
+            <div id="m15-list" class="space-y-3">
+                <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">Order #ORD-9921 (Jamal Hossain)</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Destination: Dhanmondi 27, Dhaka | Type: Express Cold-Chain</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-[11px] font-semibold">Out for Delivery</span>
+                        <p class="text-[10px] text-slate-400 mt-1">OTP: 8492</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 MedixPulse-BD-1. Enterprise Healthcare Ecosystem.
+    </footer>
+
+    <!-- Module 15 Logic Script -->
+    <script>
+        const form = document.getElementById('fleet-form');
+        const alertBox = document.getElementById('m15-alert');
+        const btn = document.getElementById('m15-btn');
+        const listContainer = document.getElementById('m15-list');
+
+        let fleetDispatches = JSON.parse(localStorage.getItem('medix_m15_fleet')) || [
+            { order: '#ORD-9921', rider: 'Jamal Hossain', destination: 'Dhanmondi 27, Dhaka', type: 'Express Cold-Chain Delivery', otp: '8492', status: 'Out for Delivery' }
+        ];
+
+        function renderM15List() {
+            if (!fleetDispatches || fleetDispatches.length === 0) {
+                listContainer.innerHTML = '<p class="text-slate-500 text-sm italic">No active fleet dispatches found.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = fleetDispatches.map((item, index) => `
+                <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">Order ${item.order} (${item.rider})</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Destination: ${item.destination} | Type: ${item.type}</p>
+                    </div>
+                    <div class="text-right flex items-center gap-3">
+                        <div>
+                            <span class="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-[11px] font-semibold">${item.status}</span>
+                            <p class="text-[10px] text-slate-400 mt-1">OTP: ${item.otp}</p>
+                        </div>
+                        <button onclick="removeM15(${index})" class="text-red-500 hover:text-red-700 text-xs font-medium ml-2">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.removeM15 = function(index) {
+            fleetDispatches.splice(index, 1);
+            localStorage.setItem('medix_m15_fleet', JSON.stringify(fleetDispatches));
+            renderM15List();
+        };
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Dispatching...';
+
+            const order = document.getElementById('fleet-order').value.trim();
+            const rider = document.getElementById('fleet-rider').value.trim();
+            const destination = document.getElementById('fleet-destination').value.trim();
+            const type = document.getElementById('fleet-type').value;
+            const otp = document.getElementById('fleet-otp').value.trim();
+
+            try {
+                const newItem = { order, rider, destination, type, otp, status: 'Out for Delivery' };
+                fleetDispatches.unshift(newItem);
+                localStorage.setItem('medix_m15_fleet', JSON.stringify(fleetDispatches));
+
+                if (window._supabase) {
+                    await window._supabase.from('fleet_dispatches').insert([newItem]);
+                }
+
+                alertBox.textContent = 'Fleet rider dispatched successfully with OTP verification code!';
+                alertBox.classList.remove('hidden');
+                form.reset();
+                renderM15List();
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Dispatch Fleet Rider';
+            }
+        });
+
+        renderM15List();
+    </script>
+</body>
+</html>
