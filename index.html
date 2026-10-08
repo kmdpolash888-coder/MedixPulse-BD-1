@@ -104,13 +104,14 @@
         &copy; 2026 MedixPulse-BD-1. Enterprise Global Healthcare Marketplace.
     </footer>
 
-    <!-- Application Script -->
+    <!-- Application Script with Configured Credentials -->
     <script>
-        // Supabase Configuration with Correct Project URL & Credentials
+        // Supabase Verified Credentials Configuration
         const SUPABASE_URL = 'https://cirdudmahqtqlfsadmgx.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcmR1ZG1haHF0cWxmc2FkbWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2OTQ3NzUsImV4cCI6MjA5MTI3MDc3NX0.ANON_KEY_TOKEN_FALLBACK_OR_YOUR_KEY';
+        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_IiLdBTSdYjVwEo7tTZJ-eA_2LTeiSkm';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcmR1ZG1haHF0cWxmc2FkbWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzNTI0MTcsImV4cCI6MjEwNjkyODQxN30.J4UymGx76kX8MwVa5re5TwLkSbIopzdV4_jYe9MXr7Q';
         
-        // Initialize Supabase Client safely
+        // Initialize Supabase Client using the standard Anon/Publishable Key
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -132,7 +133,7 @@
             errorBanner.classList.add('hidden');
         }
 
-        // Fetch and Render Products
+        // Fetch and Render Products from Database
         async function loadCatalog() {
             try {
                 const { data, error } = await _supabase
@@ -170,7 +171,7 @@
             }
         }
 
-        // Handle Form Submit & Bulk Upload Pipeline
+        // Handle Form Submit & Storage/Database Upload Pipeline
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitBtn.disabled = true;
@@ -205,7 +206,7 @@
                     imageUrl = publicUrlData.publicUrl;
                 }
 
-                // Insert Product into Database Table
+                // Insert Product Data into Table
                 const { error: dbError } = await _supabase
                     .from('products')
                     .insert([{
