@@ -1,306 +1,165 @@
 <!DOCTYPE html>
-<html lang="bn" x-data="{ lang: 'bn' }">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedixPulse-BD-1 | এন্টারপ্রাইজ হেলথকেয়ার ইকোসিস্টেম</title>
+    <title>MedixPulse-BD-1 | লাইভ এন্টারপ্রাইজ হেলথকেয়ার সিস্টেম</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Alpine.js for Interactive Folders & Modals -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Supabase JS Client -->
+    <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- External Supabase Client File -->
     <script src="supabaseClient.js"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen flex overflow-hidden" x-data="{ sidebarOpen: true, activeTab: 'catalog' }">
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
 
-    <!-- বাম পাশের ফোল্ডার ও সাইডবার মেনু -->
-    <aside :class="sidebarOpen ? 'w-72' : 'w-20'" class="bg-slate-900 text-slate-300 transition-all duration-300 flex flex-col justify-between border-r border-slate-800 z-20">
-        <!-- লোগো হেডার -->
-        <div class="p-5 flex items-center justify-between border-b border-slate-800">
-            <div class="flex items-center gap-3 overflow-hidden">
-                <div class="bg-indigo-600 text-white p-2.5 rounded-xl flex-shrink-0 shadow-md">
-                    <i class="fa-solid fa-heart-pulse text-lg"></i>
+    <!-- টপ হেডার বার -->
+    <header class="bg-indigo-700 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-white text-indigo-700 p-2 rounded-xl font-bold">
+                    <i class="fa-solid fa-heart-pulse"></i>
                 </div>
-                <div x-show="sidebarOpen" class="transition-opacity">
-                    <h1 class="font-bold text-white text-sm tracking-wide">মেডিক্সপালস-বিডি</h1>
-                    <span class="text-[10px] text-emerald-400 font-mono">এন্টারপ্রাইজ কমান্ড সেন্টার</span>
+                <div>
+                    <h1 class="font-bold text-sm md:text-base">মেডিক্সপালস-বিডি</h1>
+                    <p class="text-[10px] text-indigo-200">এন্টারপ্রাইজ হেলথকেয়ার ইকোসিস্টেম</p>
                 </div>
             </div>
-            <button @click="sidebarOpen = !sidebarOpen" class="text-slate-400 hover:text-white transition">
-                <i class="fa-solid fa-bars-staggered"></i>
+            <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 bg-emerald-500 text-white rounded-full text-[10px] md:text-xs font-semibold">সিস্টেম সচল</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- মেইন কন্টেন্ট এরিয়া -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 py-6 w-full space-y-6">
+        
+        <!-- নেভিগেশন বাটন ট্যাব -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button onclick="switchTab('catalog')" id="btn-catalog" class="py-2.5 px-3 bg-indigo-600 text-white font-bold rounded-xl text-xs shadow transition text-center">
+                <i class="fa-solid fa-store mr-1"></i> প্রোডাক্ট ক্যাটালগ
+            </button>
+            <button onclick="switchTab('pharmacy')" id="btn-pharmacy" class="py-2.5 px-3 bg-white text-slate-700 font-bold rounded-xl text-xs shadow-sm border border-slate-200 hover:bg-slate-50 transition text-center">
+                <i class="fa-solid fa-pills mr-1"></i> ফার্মেসি ও ব্যাচ
+            </button>
+            <button onclick="switchTab('telemed')" id="btn-telemed" class="py-2.5 px-3 bg-white text-slate-700 font-bold rounded-xl text-xs shadow-sm border border-slate-200 hover:bg-slate-50 transition text-center">
+                <i class="fa-solid fa-stethoscope mr-1"></i> টেলিমেডিসিন
+            </button>
+            <button onclick="switchTab('admin')" id="btn-admin" class="py-2.5 px-3 bg-white text-slate-700 font-bold rounded-xl text-xs shadow-sm border border-slate-200 hover:bg-slate-50 transition text-center">
+                <i class="fa-solid fa-shield-halved mr-1"></i> অ্যাডমিন কমান্ড
             </button>
         </div>
 
-        <!-- ফোল্ডার ভিত্তিক নেভিগেশন মেনু -->
-        <nav class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
-            
-            <!-- মূল ক্যাটালগ -->
-            <div>
-                <a @click="activeTab = 'catalog'" :class="activeTab === 'catalog' ? 'bg-indigo-600 text-white shadow-lg' : 'hover:bg-slate-800 text-slate-400 hover:text-white'" class="flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold cursor-pointer transition">
-                    <i class="fa-solid fa-store w-5 text-center"></i>
-                    <span x-show="sidebarOpen">হোম ও প্রোডাক্ট ক্যাটালগ</span>
-                </a>
+        <!-- ১. ক্যাটালগ সেকশন -->
+        <section id="tab-catalog" class="space-y-6">
+            <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-6 rounded-2xl shadow-md">
+                <h2 class="text-xl font-black">অনলাইন ফার্মেসি ও হেলথ শপ</h2>
+                <p class="text-xs text-indigo-100 mt-1">ঘরে বসেই জেনুইন ওষুধ এবং স্বাস্থ্য সরঞ্জাম অর্ডার করুন।</p>
             </div>
 
-            <!-- ফোল্ডার ১: ফার্মেসি ও ইনভেন্টরি (M3, M11) -->
-            <div x-data="{ open: false }" class="space-y-1">
-                <div @click="open = !open" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white cursor-pointer transition">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-pills w-5 text-center text-cyan-400"></i>
-                        <span x-show="sidebarOpen">ফার্মেসি ও ইনভেন্টরি</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                    <div class="bg-slate-100 h-36 rounded-xl flex items-center justify-center text-indigo-600 text-4xl">
+                        <i class="fa-solid fa-pills"></i>
                     </div>
-                    <i x-show="sidebarOpen" :class="open ? 'rotate-90' : ''" class="fa-solid fa-chevron-right text-[10px] transition-transform"></i>
-                </div>
-                <div x-show="open && sidebarOpen" class="pl-9 space-y-1.5 text-xs">
-                    <a @click="activeTab = 'pharmacy-batch'" class="block py-1 text-slate-400 hover:text-white cursor-pointer">ব্যাচ ও এক্সপায়ারি মনিটর</a>
-                    <a @click="activeTab = 'catalog'" class="block py-1 text-slate-400 hover:text-white cursor-pointer">ওষুধ ও সাপ্লিমেন্ট যোগ</a>
-                </div>
-            </div>
-
-            <!-- ফোল্ডার ২: টেলিমেডিসিন ও ইএইচআর (M8, M14) -->
-            <div x-data="{ open: false }" class="space-y-1">
-                <div @click="open = !open" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white cursor-pointer transition">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-stethoscope w-5 text-center text-emerald-400"></i>
-                        <span x-show="sidebarOpen">টেলিমেডিসিন ও ইএইচআর</span>
+                    <h3 class="font-bold text-sm">সেক্লো ২০ মিগ্রা ক্যাপসুল</h3>
+                    <p class="text-xs text-slate-500">ওমিপ্রাজল ইউএসপি (৩০ পিস)</p>
+                    <div class="flex justify-between items-center pt-2 border-t">
+                        <span class="text-sm font-black text-indigo-600">৩৫০ টাকা</span>
+                        <button onclick="alert('পণ্যটি কার্টেও যোগ করা হয়েছে!')" class="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-lg">কার্টে নিন</button>
                     </div>
-                    <i x-show="sidebarOpen" :class="open ? 'rotate-90' : ''" class="fa-solid fa-chevron-right text-[10px] transition-transform"></i>
                 </div>
-                <div x-show="open && sidebarOpen" class="pl-9 space-y-1.5 text-xs">
-                    <a @click="activeTab = 'telemed-vault'" class="block py-1 text-slate-400 hover:text-white cursor-pointer">লাইভ ভিডিও ও প্রেসক্রিপশন</a>
-                </div>
-            </div>
 
-            <!-- ফোল্ডার ৩: ফিনটেক ও এস্ক্রো (M5, M16) -->
-            <div x-data="{ open: false }" class="space-y-1">
-                <div @click="open = !open" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white cursor-pointer transition">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-wallet w-5 text-center text-amber-400"></i>
-                        <span x-show="sidebarOpen">ফিনটেক ও এস্ক্রো ভল্ট</span>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                    <div class="bg-slate-100 h-36 rounded-xl flex items-center justify-center text-cyan-600 text-4xl">
+                        <i class="fa-solid fa-heart-pulse"></i>
                     </div>
-                    <i x-show="sidebarOpen" :class="open ? 'rotate-90' : ''" class="fa-solid fa-chevron-right text-[10px] transition-transform"></i>
-                </div>
-                <div x-show="open && sidebarOpen" class="pl-9 space-y-1.5 text-xs">
-                    <a @click="activeTab = 'fintech-escrow'" class="block py-1 text-slate-400 hover:text-white cursor-pointer">নিরাপদ এস্ক্রো পেমেন্ট</a>
-                </div>
-            </div>
-
-            <!-- ফোল্ডার ৪: লজিস্টিকস ও ফ্লিট (M15) -->
-            <div x-data="{ open: false }" class="space-y-1">
-                <div @click="open = !open" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white cursor-pointer transition">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-truck-fast w-5 text-center text-rose-400"></i>
-                        <span x-show="sidebarOpen">লজিস্টিকস ও ফ্লিট ডিসপাচ</span>
-                    </div>
-                    <i x-show="sidebarOpen" :class="open ? 'rotate-90' : ''" class="fa-solid fa-chevron-right text-[10px] transition-transform"></i>
-                </div>
-                <div x-show="open && sidebarOpen" class="pl-9 space-y-1.5 text-xs">
-                    <a @click="activeTab = 'logistics-fleet'" class="block py-1 text-slate-400 hover:text-white cursor-pointer">রাইডার ও ওটিপি ডেলিভারি</a>
-                </div>
-            </div>
-
-            <!-- ফোল্ডার ৫: সেটিংস ও নিরাপত্তা গভর্ন্যান্স (M19, M20) -->
-            <div x-data="{ open: false }" class="space-y-1">
-                <div @click="open = !open" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white cursor-pointer transition">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-shield-halved w-5 text-center text-purple-400"></i>
-                        <span x-show="sidebarOpen">নিরাপত্তা ও অ্যাডমিন সেটিংস</span>
-                    </div>
-                    <i x-show="sidebarOpen" :class="open ? 'rotate-90' : ''" class="fa-solid fa-chevron-right text-[10px] transition-transform"></i>
-                </div>
-                <div x-show="open && sidebarOpen" class="pl-9 space-y-1.5 text-xs">
-                    <a @click="activeTab = 'sec-command'" class="block py-1 text-slate-400 hover:text-white cursor-pointer">সুপার অ্যাডমিন কমান্ড সেন্টার</a>
-                    <a @click="activeTab = 'sec-compliance'" class="block py-1 text-slate-400 hover:text-white cursor-pointer">জিডিপিআর ও আরএলএস পলিসি</a>
-                </div>
-            </div>
-
-        </nav>
-
-        <!-- ফুটার -->
-        <div class="p-4 border-t border-slate-800 text-center">
-            <span x-show="sidebarOpen" class="text-[10px] text-slate-500">মেডিক্সপালস-বিডি ও ২০২৬</span>
-        </div>
-    </aside>
-
-    <!-- মূল কন্টেন্ট উইন্ডো -->
-    <div class="flex-1 flex flex-col overflow-hidden">
-        
-        <!-- টপ নেভবার -->
-        <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shadow-sm">
-            <div class="flex items-center gap-4 w-1/3">
-                <div class="relative w-full">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                        <i class="fa-solid fa-search text-xs"></i>
-                    </span>
-                    <input type="text" placeholder="ওষুধ, মেডিকেল ডিভাইস বা ডাক্তার খুঁজুন..." class="w-full pl-9 pr-4 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <!-- ভাষা পরিবর্তনকারী ড্রপডাউন -->
-                <select x-model="lang" class="bg-slate-100 border border-slate-200 text-xs px-3 py-1.5 rounded-xl font-medium focus:outline-none">
-                    <option value="bn">বাংলা (Bangla)</option>
-                    <option value="en">English</option>
-                </select>
-
-                <span class="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-semibold">
-                    <i class="fa-solid fa-shield-check mr-1"></i> ১০০০+ ফিচার সচল
-                </span>
-                <div class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-md">অ্যা</div>
-            </div>
-        </header>
-
-        <!-- ডায়নামিক কন্টেন্ট এরিয়া -->
-        <main class="flex-1 overflow-y-auto p-6 bg-slate-100 space-y-6">
-            
-            <!-- ১. ক্যাটালগ ও হোম ট্যাব -->
-            <div x-show="activeTab === 'catalog'" class="space-y-6">
-                <!-- ব্যানার -->
-                <div class="bg-gradient-to-r from-indigo-700 via-indigo-800 to-indigo-900 text-white p-6 rounded-3xl shadow-xl flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="space-y-2">
-                        <span class="text-[10px] uppercase tracking-widest bg-indigo-500/50 px-3 py-1 rounded-md text-indigo-200 font-semibold" x-text="lang === 'bn' ? 'বিশেষ অফার' : 'Special Offer'"></span>
-                        <h2 class="text-2xl font-black" x-text="lang === 'bn' ? 'অ্যাপ রেজিস্ট্রেশন করলেই ৫০০/- টাকার কেনাকাটায় ডিসকাউন্ট ফ্রি!' : 'Get ৳500 Discount on App Registration!'"></h2>
-                        <p class="text-xs text-indigo-100" x-text="lang === 'bn' ? 'ঘরে বসেই অর্ডার করুন জেনুইন ওষুধ, হেলথ গ্যাজেট এবং ডায়াগনস্টিক টেস্ট।' : 'Order genuine medicines, health gadgets, and diagnostic tests from home.'"></p>
-                    </div>
-                    <button class="bg-white text-indigo-700 font-bold px-5 py-2.5 rounded-xl text-xs shadow-md hover:bg-slate-100 transition whitespace-nowrap" x-text="lang === 'bn' ? 'অফার উপভোগ করুন' : 'Claim Offer'"></button>
-                </div>
-
-                <!-- প্রোডাক্ট ক্যাটালগ গ্রিড -->
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h3 class="text-base font-bold text-slate-800" x-text="lang === 'bn' ? 'ফার্মেসি ও হেলথ কেয়ার ফ্ল্যাশ সেল' : 'Pharmacy & Healthcare Flash Sale'"></h3>
-                        <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full" x-text="lang === 'bn' ? 'সময় বাকি: ০৪:১২:১৫ ঘন্টা' : 'Time Left: 04:12:15'"></span>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                        
-                        <!-- কার্ড ১ -->
-                        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition space-y-3">
-                            <div class="bg-slate-50 h-40 rounded-xl flex items-center justify-center relative overflow-hidden">
-                                <span class="absolute top-2 left-2 bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full" x-text="lang === 'bn' ? '-২৫% ছাড়' : '-25% Off'"></span>
-                                <i class="fa-solid fa-pills text-indigo-500 text-5xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm text-slate-800" x-text="lang === 'bn' ? 'সেক্লো ২০ মিগ্রা ক্যাপসুল (৩০টি)' : 'Seclo 20mg Capsule (30s)'"></h4>
-                                <p class="text-[11px] text-slate-500 mt-0.5" x-text="lang === 'bn' ? 'জেনারেটিক: ওমিপ্রাজল ইউএসপি' : 'Generic: Omeprazole USP'"></p>
-                            </div>
-                            <div class="flex justify-between items-center pt-2 border-t">
-                                <div>
-                                    <span class="text-sm font-black text-indigo-600" x-text="lang === 'bn' ? '৩৫০ টাকা' : '৳350'"></span>
-                                    <span class="text-[10px] text-slate-400 line-through ml-1" x-text="lang === 'bn' ? '৪৫০ টাকা' : '৳450'"></span>
-                                </div>
-                                <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition shadow-sm" x-text="lang === 'bn' ? 'কার্টে নিন' : 'Add to Cart'"></button>
-                            </div>
-                        </div>
-
-                        <!-- কার্ড ২ -->
-                        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition space-y-3">
-                            <div class="bg-slate-50 h-40 rounded-xl flex items-center justify-center relative overflow-hidden">
-                                <span class="absolute top-2 left-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full" x-text="lang === 'bn' ? 'ফ্রি ডেলিভারি' : 'Free Delivery'"></span>
-                                <i class="fa-solid fa-heart-pulse text-cyan-600 text-5xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm text-slate-800" x-text="lang === 'bn' ? 'ডিজিটাল ব্লাড প্রেশার মনিটর' : 'Digital Blood Pressure Monitor'"></h4>
-                                <p class="text-[11px] text-slate-500 mt-0.5" x-text="lang === 'bn' ? 'ব্র্যান্ড: অমরণ জাপানিজ টেকনোলজি' : 'Brand: Omron Tech'"></p>
-                            </div>
-                            <div class="flex justify-between items-center pt-2 border-t">
-                                <div>
-                                    <span class="text-sm font-black text-indigo-600" x-text="lang === 'bn' ? '২,২০০ টাকা' : '৳2,200'"></span>
-                                    <span class="text-[10px] text-slate-400 line-through ml-1" x-text="lang === 'bn' ? '২,৬০০ টাকা' : '৳2,600'"></span>
-                                </div>
-                                <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition shadow-sm" x-text="lang === 'bn' ? 'কার্টে নিন' : 'Add to Cart'"></button>
-                            </div>
-                        </div>
-
+                    <h3 class="font-bold text-sm">ডিজিটাল ব্লাড প্রেশার মনিটর</h3>
+                    <p class="text-xs text-slate-500">জাপানিজ টেকনোলজি মেশিন</p>
+                    <div class="flex justify-between items-center pt-2 border-t">
+                        <span class="text-sm font-black text-indigo-600">২,২০০ টাকা</span>
+                        <button onclick="alert('পণ্যটি কার্টেও যোগ করা হয়েছে!')" class="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-lg">কার্টে নিন</button>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- ২. ফার্মেসি ব্যাচ ও এক্সপায়ারি মনিটর (M11) -->
-            <div x-show="activeTab === 'pharmacy-batch'" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                <h3 class="text-lg font-bold text-indigo-700" x-text="lang === 'bn' ? 'ফার্মেসি ব্যাচ ও এক্সপায়ারি মনিটর (মডিউল ১১)' : 'Pharmacy Batch & Expiry Monitor (M11)'"></h3>
-                <p class="text-xs text-slate-500" x-text="lang === 'bn' ? 'ওষুধের ব্যাচ নম্বর, কোল্ড-চেইন তাপমাত্রা এবং জেনেরিক বিকল্প ট্র্যাক করুন।' : 'Track medicine batch numbers, cold-chain temperatures, and generic substitutes.'"></p>
-                <form id="m11-form" class="space-y-3 max-w-lg" onsubmit="event.preventDefault(); alert('ব্যাচ সফলভাবে রেজিস্টার্ড হয়েছে!');">
+        <!-- ২. ফার্মেসি ব্যাচ সেকশন -->
+        <section id="tab-pharmacy" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <h2 class="text-lg font-bold text-indigo-700">ফার্মেসি ব্যাচ ও এক্সপায়ারি মনিটর</h2>
+                <form id="pharmacy-form" onsubmit="handlePharmacySubmit(event)" class="space-y-3 max-w-lg">
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1" x-text="lang === 'bn' ? 'ওষুধের নাম' : 'Medication Name'"></label>
-                        <input type="text" required placeholder="যেমন: সেক্লো ২০ মিগ্রা" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
+                        <label class="block text-xs font-medium text-slate-700 mb-1">ওষুধের নাম</label>
+                        <input type="text" id="p-name" required placeholder="যেমন: প্যারাসিটামল ৫০০মিগ্রা" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1" x-text="lang === 'bn' ? 'ব্যাচ নম্বর' : 'Batch Number'"></label>
-                            <input type="text" required placeholder="BAT-9021" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1" x-text="lang === 'bn' ? 'মেয়াদ উত্তীর্ণের তারিখ' : 'Expiry Date'"></label>
-                            <input type="date" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
-                        </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">ব্যাচ নম্বর</label>
+                        <input type="text" id="p-batch" required placeholder="BAT-4021" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
                     </div>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-lg text-xs" x-text="lang === 'bn' ? 'ব্যাচ রেজিস্টার করুন' : 'Register Batch'"></button>
+                    <button type="submit" class="bg-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-lg">ব্যাচ সেভ করুন</button>
                 </form>
+                <div id="pharmacy-list" class="space-y-2 mt-4"></div>
             </div>
+        </section>
 
-            <!-- ৩. এস্ক্রো পেমেন্ট ভল্ট (M16) -->
-            <div x-show="activeTab === 'fintech-escrow'" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                <h3 class="text-lg font-bold text-indigo-700" x-text="lang === 'bn' ? 'ফিনটেক ও এস্ক্রো পেমেন্ট ভল্ট (মডিউল ১৬)' : 'FinTech & Escrow Payment Vault (M16)'"></h3>
-                <p class="text-xs text-slate-500" x-text="lang === 'bn' ? 'ক্রেতার ফান্ড নিরাপদে এস্ক্রোতে লক রাখুন এবং ডেলিভারি শেষে ভেন্ডরের নিকট রিলিজ করুন।' : 'Secure buyer funds in escrow and release to vendor upon delivery completion.'"></p>
-                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 max-w-lg">
-                    <div class="flex justify-between text-xs font-bold">
-                        <span x-text="lang === 'bn' ? 'লেনদেন আইডি: #ESC-8821' : 'Transaction ID: #ESC-8821'"></span>
-                        <span class="text-emerald-600" x-text="lang === 'bn' ? 'ফান্ড এস্ক্রোতে সুরক্ষিত' : 'Funds Locked'"></span>
-                    </div>
-                    <p class="text-xs text-slate-600" x-text="lang === 'bn' ? 'পরিমাণ: ১২০.০০ ডলার (অটো ভ্যাট ৫% কর্তন করা হয়েছে)' : 'Amount: $120.00 (Auto VAT 5% Deducted)'"></p>
-                </div>
+        <!-- ৩. টেলিমেডিসিন সেকশন -->
+        <section id="tab-telemed" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <h2 class="text-lg font-bold text-indigo-700">লাইভ টেলিমেডিসিন ও ইএইচআর</h2>
+                <p class="text-xs text-slate-500">ডাক্তারের সাথে অনলাইন ভিডিও কনফারেন্সিং এবং ডিজিটাল প্রেসক্রিপশন ভল্ট।</p>
+                <button onclick="alert('ওয়েবআরটিসি ভিডিও কল রুম তৈরি করা হয়েছে!')" class="bg-emerald-600 text-white text-xs font-semibold px-4 py-2.5 rounded-lg">ভিডিও কনফারেন্স শুরু করুন</button>
             </div>
+        </section>
 
-            <!-- ৪. সুপার অ্যাডমিন কমান্ড সেন্টার (M20) -->
-            <div x-show="activeTab === 'sec-command'" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                <h3 class="text-lg font-bold text-indigo-700" x-text="lang === 'bn' ? 'সুপার অ্যাডমিন কমান্ড সেন্টার (মডিউল ২০)' : 'Super Admin Command Center (M20)'"></h3>
-                <p class="text-xs text-slate-500" x-text="lang === 'bn' ? 'গ্লোবাল সার্ভার ক্লাস্টার স্কেলিং ও সিস্টেম আপটাইম মনিটরিং প্যানেল।' : 'Global server cluster scaling and system uptime monitoring panel.'"></p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-xl">
-                        <span class="text-xs text-indigo-600 font-bold" x-text="lang === 'bn' ? 'সার্ভার আপটাইম' : 'Server Uptime'"></span>
-                        <h4 class="text-xl font-black text-indigo-900 mt-1">৯৯.৯৯%</h4>
+        <!-- ৪. অ্যাডমিন কমান্ড সেকশন -->
+        <section id="tab-admin" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <h2 class="text-lg font-bold text-indigo-700">সুপার অ্যাডমিন কমান্ড সেন্টার</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-slate-50 rounded-xl border">
+                        <span class="text-xs text-slate-500">সিস্টেম আপটাইম</span>
+                        <h3 class="text-xl font-bold text-emerald-600">৯৯.৯৯%</h3>
                     </div>
-                    <div class="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
-                        <span class="text-xs text-emerald-600 font-bold" x-text="lang === 'bn' ? 'সক্রিয় নোড' : 'Active Nodes'"></span>
-                        <h4 class="text-xl font-black text-emerald-900 mt-1">ঢাকা ও সিঙ্গাপুর</h4>
+                    <div class="p-4 bg-slate-50 rounded-xl border">
+                        <span class="text-xs text-slate-500">সিকিউরিটি প্রটেকশন</span>
+                        <h3 class="text-xl font-bold text-indigo-600">AES-256 RLS</h3>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- ৫. নিরাপত্তা ও কমপ্লায়েন্স (M19) -->
-            <div x-show="activeTab === 'sec-compliance'" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                <h3 class="text-lg font-bold text-indigo-700" x-text="lang === 'bn' ? 'নিরাপত্তা ও কমপ্লায়েন্স (মডিউল ১৯)' : 'Security & Compliance (M19)'"></h3>
-                <p class="text-xs text-slate-500" x-text="lang === 'bn' ? 'সুপাবেস আরও লেভেল সিকিউরিটি (RLS) ও জিডিপিআর প্রাইভেসি পলিসি কনফিগারেশন।' : 'Supabase Row Level Security (RLS) & GDPR privacy policy configuration.'"></p>
-                <div class="p-4 bg-slate-50 border border-dashed border-slate-300 rounded-xl text-xs text-slate-600">
-                    <p class="font-bold text-slate-700" x-text="lang === 'bn' ? 'সর্বোচ্চ এনক্রিপশন (AES-256) সক্রিয় রয়েছে।' : 'Maximum Encryption (AES-256) is active.'"></p>
-                </div>
-            </div>
+    </main>
 
-            <!-- ৬. টেলিমেডিসিন ও ইএইচআর ভল্ট (M14) -->
-            <div x-show="activeTab === 'telemed-vault'" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                <h3 class="text-lg font-bold text-indigo-700" x-text="lang === 'bn' ? 'টেলিমেডিসিন ও ইএইচআর ভল্ট (মডিউল ১৪)' : 'Telemedicine & EHR Vault (M14)'"></h3>
-                <p class="text-xs text-slate-500" x-text="lang === 'bn' ? 'এইচডি ভিডিও কনফারেন্সিং রুম ও ডিজিটাল প্রেসক্রিপশন কিউআর কোড ভল্ট।' : 'HD video conferencing rooms and digital prescription QR code vaults.'"></p>
-                <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
-                    <span class="font-bold" x-text="lang === 'bn' ? 'সেশন স্ট্যাটাস: সিকিউরড ওয়েবআরটিসি রুম প্রস্তুত' : 'Session Status: Secure WebRTC Room Ready'"></span>
-                </div>
-            </div>
+    <!-- ফুটার -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
+        &copy; ২০২৬ মেডিক্সপালস-বিডি। সর্বস্বত্ব সংরক্ষিত।
+    </footer>
 
-            <!-- ৭. লজিস্টিকস ও ফ্লিট ডিসপাচ (M15) -->
-            <div x-show="activeTab === 'logistics-fleet'" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                <h3 class="text-lg font-bold text-indigo-700" x-text="lang === 'bn' ? 'লজিস্টিকস ও ফ্লিট ডিসপাচ (মডিউল ১৫)' : 'Logistics & Fleet Dispatch (M15)'"></h3>
-                <p class="text-xs text-slate-500" x-text="lang === 'bn' ? 'রাইডার জিপিএস ট্র্যাকিং ও ওটিপি-ভিত্তিক ডেলিভারি কনফার্মেশন সিস্টেম।' : 'Rider GPS tracking and OTP-based delivery confirmation system.'"></p>
-                <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
-                    <span class="font-bold" x-text="lang === 'bn' ? 'ডেলিভারি ওটিপি কোড: ৮৪৯২ (সক্রিয়)' : 'Delivery OTP Code: 8492 (Active)'"></span>
-                </div>
-            </div>
+    <!-- জাভাস্ক্রিপ্ট লজিক -->
+    <script>
+        function switchTab(tabId) {
+            ['catalog', 'pharmacy', 'telemed', 'admin'].forEach(t => {
+                document.getElementById('tab-' + t).classList.add('hidden');
+                document.getElementById('btn-' + t).className = 'py-2.5 px-3 bg-white text-slate-700 font-bold rounded-xl text-xs shadow-sm border border-slate-200 hover:bg-slate-50 transition text-center';
+            });
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).className = 'py-2.5 px-3 bg-indigo-600 text-white font-bold rounded-xl text-xs shadow transition text-center';
+        }
 
-        </main>
-    </div>
-
+        function handlePharmacySubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('p-name').value;
+            const batch = document.getElementById('p-batch').value;
+            const list = document.getElementById('pharmacy-list');
+            
+            list.innerHTML += `<div class="p-3 bg-slate-50 border rounded-xl text-xs flex justify-between items-center">
+                <span><b>${name}</b> (ব্যাচ: ${batch})</span>
+                <span class="text-emerald-600 font-semibold">সফলভাবে যুক্ত হয়েছে</span>
+            </div>`;
+            e.target.reset();
+        }
+    </script>
 </body>
 </html>
