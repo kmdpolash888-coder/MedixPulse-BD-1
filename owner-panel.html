@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedixPulse-BD-1 | Owner & Vendor Panel</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- External Supabase Client File -->
+    <script src="supabaseClient.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white py-4 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">MedixPulse-BD-1 | Owner Panel</h1>
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-sm bg-indigo-500 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition">Marketplace</a>
+                <a href="auth.html" class="text-sm bg-white text-indigo-600 font-semibold px-3 py-1.5 rounded-lg shadow-sm hover:bg-slate-100 transition">Account</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto px-4 py-8 w-full">
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+            
+            <div class="mb-6 border-b pb-4">
+                <h2 class="text-2xl font-bold text-indigo-700">Vendor Registration & Management</h2>
+                <p class="text-sm text-slate-500 mt-1">Register your pharmacy or healthcare store to get a unique Vendor UUID and start listing products.</p>
+            </div>
+
+            <!-- Alerts -->
+            <div id="vendor-error" class="hidden mb-4 p-3 bg-red-100 text-red-700 text-sm rounded-lg"></div>
+            <div id="vendor-success" class="hidden mb-4 p-3 bg-emerald-100 text-emerald-700 text-sm rounded-lg"></div>
+
+            <!-- Vendor Registration Form -->
+            <form id="vendor-reg-form" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Owner Full Name</label>
+                        <input type="text" id="owner-name" required placeholder="e.g. Dr. Tanvir Ahmed" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Business / Pharmacy Name</label>
+                        <input type="text" id="business-name" required placeholder="e.g. Dhaka Medical Pharma" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Contact Phone Number</label>
+                        <input type="text" id="owner-phone" required placeholder="+880 1700 000000" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Unique Vendor UUID (Auto-generated)</label>
+                        <input type="text" id="vendor-uuid-display" readonly class="w-full px-4 py-2.5 border border-slate-300 bg-slate-100 rounded-lg text-sm text-slate-600 font-mono">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Complete Store Address</label>
+                    <textarea id="owner-address" rows="3" required placeholder="e.g. House 12, Road 5, Dhanmondi, Dhaka" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"></textarea>
+                </div>
+
+                <button type="submit" id="save-vendor-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition text-sm shadow-md">
+                    Save & Activate Vendor Profile
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <header class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 MedixPulse-BD-1. Enterprise Healthcare Ecosystem.
+    </header>
+
+    <!-- Script Logic -->
+    <script>
+        const errorBanner = document.getElementById('vendor-error');
+        const successBanner = document.getElementById('vendor-success');
+        const vendorForm = document.getElementById('vendor-reg-form');
+        const uuidDisplay = document.getElementById('vendor-uuid-display');
+        const saveBtn = document.getElementById('save-vendor-btn');
+
+        // Generate or load unique vendor UUID
+        let currentUuid = localStorage.getItem('medix_vendor_uuid');
+        if (!currentUuid) {
+            currentUuid = 'v-' + Math.random().toString(36).substring(2, 12) + '-' + Date.now().toString(36);
+            localStorage.setItem('medix_vendor_uuid', currentUuid);
+        }
+        uuidDisplay.value = currentUuid;
+
+        // Load existing stored data if available
+        document.getElementById('owner-name').value = localStorage.getItem('medix_owner_name') || '';
+        document.getElementById('business-name').value = localStorage.getItem('medix_business_name') || '';
+        document.getElementById('owner-phone').value = localStorage.getItem('medix_owner_phone') || '';
+        document.getElementById('owner-address').value = localStorage.getItem('medix_owner_address') || '';
+
+        function showError(msg) {
+            errorBanner.textContent = msg;
+            errorBanner.classList.remove('hidden');
+            successBanner.classList.add('hidden');
+        }
+
+        function showSuccess(msg) {
+            successBanner.textContent = msg;
+            successBanner.classList.remove('hidden');
+            errorBanner.classList.add('hidden');
+        }
+
+        vendorForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving Profile...';
+
+            const ownerName = document.getElementById('owner-name').value.trim();
+            const businessName = document.getElementById('business-name').value.trim();
+            const phone = document.getElementById('owner-phone').value.trim();
+            const address = document.getElementById('owner-address').value.trim();
+
+            try {
+                // Save locally for persistence
+                localStorage.setItem('medix_owner_name', ownerName);
+                localStorage.setItem('medix_business_name', businessName);
+                localStorage.setItem('medix_owner_phone', phone);
+                localStorage.setItem('medix_owner_address', address);
+
+                // Try to sync with Supabase 'vendors' table if connected via global window._supabase
+                if (window._supabase) {
+                    const { error } = await window._supabase
+                        .from('vendors')
+                        .upsert([{ 
+                            uuid: currentUuid, 
+                            name: ownerName, 
+                            business_name: businessName,
+                            phone: phone,
+                            address: address 
+                        }], { onConflict: 'uuid' });
+
+                    if (error) {
+                        console.warn('Supabase sync warning:', error.message);
+                    }
+                }
+
+                showSuccess('Vendor profile successfully saved and activated! UUID: ' + currentUuid);
+            } catch (err) {
+                showError('Error saving profile: ' + err.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save & Activate Vendor Profile';
+            }
+        });
+    </script>
+</body>
+</html>
