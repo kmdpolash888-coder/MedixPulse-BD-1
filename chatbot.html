@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedixPulse-BD-1 | AI Health Assistant Chatbot</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- External Supabase Client File -->
+    <script src="supabaseClient.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white py-4 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">MedixPulse-BD-1 | AI Assistant</h1>
+            <div class="flex items-center gap-3">
+                <a href="logistics.html" class="text-sm bg-indigo-500 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition">Logistics</a>
+                <a href="index.html" class="text-sm bg-white text-indigo-600 font-semibold px-3 py-1.5 rounded-lg shadow-sm hover:bg-slate-100 transition">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-4xl mx-auto px-4 py-8 w-full flex flex-col">
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col h-[600px] overflow-hidden">
+            
+            <!-- Chat Header -->
+            <div class="bg-indigo-50 px-6 py-4 border-b border-indigo-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-sm">AI</div>
+                    <div>
+                        <h2 class="font-bold text-sm text-indigo-900">MedixPulse Smart Health Companion</h2>
+                        <p class="text-[11px] text-indigo-600">Always online to assist with medical queries & symptom checking</p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-semibold">Active AI Model</span>
+            </div>
+
+            <!-- Chat Messages Window -->
+            <div id="chat-messages" class="flex-grow p-6 overflow-y-auto space-y-4 bg-slate-50">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">AI</div>
+                    <div class="bg-white border border-slate-200 p-3.5 rounded-2xl rounded-tl-none shadow-sm max-w-md text-xs text-slate-700">
+                        Hello! I am your MedixPulse AI Health Assistant. How can I help you today? You can ask about medicine dosages, symptoms, or health tips.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Form -->
+            <form id="chat-form" class="p-4 bg-white border-t border-slate-200 flex gap-2">
+                <input type="text" id="chat-input" required placeholder="Type your symptom or health question here..." class="flex-grow px-4 py-2.5 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button type="submit" id="send-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl text-xs font-semibold transition shadow-md">
+                    Send
+                </button>
+            </form>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 MedixPulse-BD-1. Enterprise Healthcare Ecosystem.
+    </footer>
+
+    <!-- AI Chatbot Logic Script -->
+    <script>
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const sendBtn = document.getElementById('send-btn');
+
+        function appendMessage(sender, text) {
+            const isAi = sender === 'ai';
+            const messageHtml = isAi ? `
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">AI</div>
+                    <div class="bg-white border border-slate-200 p-3.5 rounded-2xl rounded-tl-none shadow-sm max-w-md text-xs text-slate-700">
+                        ${text}
+                    </div>
+                </div>
+            ` : `
+                <div class="flex items-start gap-3 justify-end">
+                    <div class="bg-indigo-600 text-white p-3.5 rounded-2xl rounded-tr-none shadow-sm max-w-md text-xs">
+                        ${text}
+                    </div>
+                    <div class="w-8 h-8 bg-slate-700 text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">You</div>
+                </div>
+            `;
+            chatMessages.insertAdjacentHTML('beforeend', messageHtml);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const question = chatInput.value.trim();
+            if (!question) return;
+
+            appendMessage('user', question);
+            chatInput.value = '';
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Thinking...';
+
+            try {
+                // Simulate intelligent AI response based on medical context
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                let aiReply = "Thank you for sharing. Based on your description, it is recommended to stay hydrated and consult a specialist if symptoms persist for more than 48 hours. Would you like me to book a doctor appointment for you?";
+                
+                const lowerQ = question.toLowerCase();
+                if (lowerQ.includes('fever') || lowerQ.includes('jhor') || lowerQ.includes('temperature')) {
+                    aiReply = "For fever, ensure adequate rest and hydration. Paracetamol (like Napa 500mg) is commonly used, but please consult our certified general physician through the Telemedicine module for proper prescription.";
+                } else if (lowerQ.includes('headache') || lowerQ.includes('matha betha')) {
+                    aiReply = "Headaches can be caused by stress, dehydration, or eye strain. Try resting in a quiet, dark room. If it's severe, consider speaking with a neurologist in our directory.";
+                }
+
+                appendMessage('ai', aiReply);
+
+                // Sync with Supabase 'ai_chats' table if available
+                if (window._supabase) {
+                    await window._supabase
+                        .from('ai_chats')
+                        .insert([{ query: question, response: aiReply }]);
+                }
+
+            } catch (err) {
+                appendMessage('ai', 'Sorry, I am having trouble connecting to the healthcare neural network right now.');
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send';
+            }
+        });
+    </script>
+</body>
+</html>
