@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedixPulse-BD-1 | Advanced Marketing & SEO Growth</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- External Supabase Client File -->
+    <script src="supabaseClient.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white py-4 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">MedixPulse-BD-1 | M18 Marketing & SEO</h1>
+            <div class="flex items-center gap-3">
+                <a href="ai-predictive.html" class="text-sm bg-indigo-500 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition">Module 17</a>
+                <a href="index.html" class="text-sm bg-white text-indigo-600 font-semibold px-3 py-1.5 rounded-lg shadow-sm hover:bg-slate-100 transition">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Campaign & SEO Generator Form (Left Column) -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 space-y-4 h-fit">
+            <div class="border-b pb-3">
+                <h2 class="text-xl font-bold text-indigo-700">Growth Hacking & SEO</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Configure CAPI events, OG tags & flash sale campaigns.</p>
+            </div>
+
+            <div id="m18-alert" class="hidden p-3 bg-emerald-100 text-emerald-700 text-xs rounded-lg"></div>
+
+            <form id="growth-form" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Campaign / Promo Title</label>
+                    <input type="text" id="growth-title" required placeholder="e.g. 50% Flash Sale on Healthcare Gadgets" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Growth & Marketing Channel</label>
+                    <select id="growth-channel" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white">
+                        <option value="Meta CAPI & Pixel Advanced Event">Meta CAPI & Pixel Advanced Event</option>
+                        <option value="SEO Dynamic Open Graph (OG) Tags">SEO Dynamic Open Graph (OG) Tags</option>
+                        <option value="Affiliate & Referral Commission Program">Affiliate & Referral Program</option>
+                        <option value="Flash Sale Countdown Timer Widget">Flash Sale Countdown Timer</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Target Keyword / Conversion Tag</label>
+                    <input type="text" id="growth-keyword" required placeholder="e.g. online pharmacy bangladesh" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Promo Description & Meta Note</label>
+                    <textarea id="growth-desc" rows="2" required placeholder="Write brief description for SEO/Social sharing..." class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+
+                <button type="submit" id="m18-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition text-xs shadow-md">
+                    Deploy Growth Campaign
+                </button>
+            </form>
+        </section>
+
+        <!-- Active Growth Campaigns List (Right 2 Columns) -->
+        <section class="lg:col-span-2 space-y-4">
+            <h2 class="text-xl font-bold text-slate-800">Active Growth Campaigns & SEO Optimizations</h2>
+            <div id="m18-list" class="space-y-3">
+                <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">50% Flash Sale on Healthcare Gadgets</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Channel: Flash Sale Countdown Timer | Keyword: flash sale bd</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-semibold">Active / Optimized</span>
+                        <p class="text-[10px] text-slate-400 mt-1">SEO Score: 99/100</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 MedixPulse-BD-1. Enterprise Healthcare Ecosystem.
+    </footer>
+
+    <!-- Module 18 Logic Script -->
+    <script>
+        const form = document.getElementById('growth-form');
+        const alertBox = document.getElementById('m18-alert');
+        const btn = document.getElementById('m18-btn');
+        const listContainer = document.getElementById('m18-list');
+
+        let growthCampaigns = JSON.parse(localStorage.getItem('medix_m18_growth')) || [
+            { title: '50% Flash Sale on Healthcare Gadgets', channel: 'Flash Sale Countdown Timer', keyword: 'flash sale bd', status: 'Active / Optimized' }
+        ];
+
+        function renderM18List() {
+            if (!growthCampaigns || growthCampaigns.length === 0) {
+                listContainer.innerHTML = '<p class="text-slate-500 text-sm italic">No growth campaigns found.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = growthCampaigns.map((item, index) => `
+                <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">${item.title}</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Channel: ${item.channel} | Keyword: ${item.keyword}</p>
+                    </div>
+                    <div class="text-right flex items-center gap-3">
+                        <div>
+                            <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-semibold">${item.status}</span>
+                            <p class="text-[10px] text-slate-400 mt-1">SEO Score: 99/100</p>
+                        </div>
+                        <button onclick="removeM18(${index})" class="text-red-500 hover:text-red-700 text-xs font-medium ml-2">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.removeM18 = function(index) {
+            growthCampaigns.splice(index, 1);
+            localStorage.setItem('medix_m18_growth', JSON.stringify(growthCampaigns));
+            renderM18List();
+        };
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Deploying Campaign...';
+
+            const title = document.getElementById('growth-title').value.trim();
+            const channel = document.getElementById('growth-channel').value;
+            const keyword = document.getElementById('growth-keyword').value.trim();
+
+            try {
+                const newItem = { title, channel, keyword, status: 'Active / Optimized' };
+                growthCampaigns.unshift(newItem);
+                localStorage.setItem('medix_m18_growth', JSON.stringify(growthCampaigns));
+
+                if (window._supabase) {
+                    await window._supabase.from('growth_campaigns').insert([newItem]);
+                }
+
+                alertBox.textContent = 'Growth hacking campaign and SEO tags deployed successfully!';
+                alertBox.classList.remove('hidden');
+                form.reset();
+                renderM18List();
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Deploy Growth Campaign';
+            }
+        });
+
+        renderM18List();
+    </script>
+</body>
+</html>
