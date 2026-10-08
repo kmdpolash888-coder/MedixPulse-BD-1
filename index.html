@@ -3,300 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedixPulse-BD-1 | Global Healthcare Marketplace</title>
+    <title>MedixPulse-BD-1 | Enterprise Healthcare Ecosystem Master Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Meta Pixel Code -->
-    <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n.ready=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1079271335006497');
-      fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=1079271335006497&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
+    <!-- External Supabase Client File -->
+    <script src="supabaseClient.js"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
 
-    <!-- Header Section -->
-    <header class="bg-indigo-600 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold tracking-wide">MedixPulse-BD-1</h1>
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white py-5 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-black tracking-tight">MedixPulse-BD-1</h1>
+                <p class="text-xs text-indigo-200 mt-0.5">Enterprise Healthcare Ecosystem & 20-Module Command Center</p>
+            </div>
             <div class="flex items-center gap-3">
-                <span class="text-sm bg-indigo-500 px-3 py-1 rounded-full hidden md:inline-block">Global Multi-Vendor Healthcare</span>
-                <a href="#vendor-section" class="bg-white text-indigo-600 px-3 py-1.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-slate-100 transition">Owner Panel</a>
+                <span class="px-3 py-1 bg-emerald-500 text-white rounded-full text-xs font-semibold">System Status: 1000+ Features Active</span>
+                <a href="admin-command-center.html" class="text-xs bg-white text-indigo-600 font-bold px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-50 transition">Super Admin</a>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-10 w-full space-y-8">
         
-        <!-- Owner / Vendor Panel & Product Upload Form (Left Column) -->
-        <section id="vendor-section" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1 space-y-6">
+        <!-- Welcome Banner -->
+        <div class="bg-gradient-to-r from-indigo-700 to-indigo-900 text-white p-8 rounded-3xl shadow-xl flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="space-y-2">
+                <span class="text-xs uppercase tracking-widest bg-indigo-500/50 px-3 py-1 rounded-md text-indigo-200 font-semibold">Master Navigation Hub</span>
+                <h2 class="text-3xl font-extrabold tracking-tight">Explore All 20 Enterprise Modules</h2>
+                <p class="text-xs text-indigo-100 max-w-xl leading-relaxed">
+                    Access all core architectures, advanced pharmacy supply chains, AI predictive health models, fintech escrow vaults, and security governance layers from a single unified portal.
+                </p>
+            </div>
+            <div class="flex flex-col gap-2 w-full md:w-auto">
+                <a href="admin-command-center.html" class="bg-white text-indigo-700 font-bold px-6 py-3 rounded-xl text-center text-xs shadow-md hover:bg-slate-100 transition">
+                    Open Command Center (M20)
+                </a>
+                <a href="security-compliance.html" class="bg-indigo-600 text-white border border-indigo-400 font-bold px-6 py-3 rounded-xl text-center text-xs shadow-md hover:bg-indigo-800 transition">
+                    Security & RLS Governance (M19)
+                </a>
+            </div>
+        </div>
+
+        <!-- Modules Grid Section -->
+        <div class="space-y-4">
+            <h3 class="text-xl font-bold text-slate-800 border-b pb-2">All Modular Development Stages (M1 - M20)</h3>
             
-            <!-- Vendor Account Registration Section -->
-            <div>
-                <h2 class="text-xl font-semibold mb-3 text-indigo-700">Vendor / Owner Account</h2>
-                <div id="vendor-success" class="hidden mb-3 p-2 bg-emerald-100 text-emerald-700 text-xs rounded-lg"></div>
-                <form id="vendor-form" class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Owner / Vendor Name</label>
-                        <input type="text" id="owner-name" required placeholder="e.g. Dr. Rahim Ahmed" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Business / Pharmacy Address</label>
-                        <input type="text" id="owner-address" required placeholder="e.g. Dhanmondi, Dhaka, Bangladesh" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <button type="submit" class="w-full bg-slate-800 text-white font-medium py-2 rounded-lg text-sm hover:bg-slate-900 transition">
-                        Save / Generate Vendor ID
-                    </button>
-                </form>
-            </div>
-
-            <hr class="border-slate-200">
-
-            <!-- Product Upload Section -->
-            <div>
-                <h2 class="text-xl font-semibold mb-3 text-indigo-700">Add Marketplace Product</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 
-                <div id="error-banner" class="hidden mb-3 p-3 bg-red-100 text-red-700 text-sm rounded-lg"></div>
-                <div id="success-banner" class="hidden mb-3 p-3 bg-emerald-100 text-emerald-700 text-sm rounded-lg"></div>
+                <!-- M1-M10 Core Modules -->
+                <a href="index.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Module 01 - 02</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-indigo-600 transition">Auth & Core Engine</h4>
+                    <p class="text-xs text-slate-500 mt-1">Supabase user sessions, RLS & initial routing.</p>
+                </a>
 
-                <form id="product-form" class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Assigned Vendor UUID / ID</label>
-                        <input type="text" id="vendor-uuid" required placeholder="Generated or enter Vendor ID" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
-                    </div>
+                <a href="inventory.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Module 03 - 04</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-indigo-600 transition">Inventory & Marketplace</h4>
+                    <p class="text-xs text-slate-500 mt-1">Vendor product catalog & stock management.</p>
+                </a>
 
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Product Name</label>
-                        <input type="text" id="product-name" required placeholder="e.g. Digital Blood Pressure Monitor" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
+                <a href="fintech-escrow.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Module 05 - 08</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-indigo-600 transition">FinTech & Telemed</h4>
+                    <p class="text-xs text-slate-500 mt-1">Escrow payment gateways & video consultations.</p>
+                </a>
 
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1">Price ($)</label>
-                            <input type="number" step="0.01" id="product-price" required placeholder="0.00" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1">Stock Quantity</label>
-                            <input type="number" id="product-stock" required placeholder="0" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        </div>
-                    </div>
+                <a href="analytics.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Module 09 - 10</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-indigo-600 transition">Analytics & Security</h4>
+                    <p class="text-xs text-slate-500 mt-1">Meta Pixel tracking & audit log governance.</p>
+                </a>
 
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Description</label>
-                        <textarea id="product-desc" rows="2" placeholder="Enter product specifications..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                    </div>
+                <!-- M11-M20 Advanced Expansion Modules -->
+                <a href="pharmacy-advanced.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-wider">Module 11</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-cyan-600 transition">Advanced Pharmacy</h4>
+                    <p class="text-xs text-slate-500 mt-1">Batch tracking, expiry alerts & cold-chain.</p>
+                </a>
 
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Product Image</label>
-                        <input type="file" id="product-image" accept="image/*" required class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                    </div>
+                <a href="vendor-governance.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-wider">Module 12</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-cyan-600 transition">Vendor Governance</h4>
+                    <p class="text-xs text-slate-500 mt-1">Dynamic commission slabs & store tiers.</p>
+                </a>
 
-                    <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-lg text-sm hover:bg-indigo-700 transition duration-200 shadow-md">
-                        Upload Product & Image
-                    </button>
-                </form>
+                <a href="crm-engagement.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-wider">Module 13</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-cyan-600 transition">CRM & WhatsApp</h4>
+                    <p class="text-xs text-slate-500 mt-1">Omnichannel customer engagement & loyalty.</p>
+                </a>
+
+                <a href="telemed-ehr.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-wider">Module 14</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-cyan-600 transition">Next-Gen Telemed & EHR</h4>
+                    <p class="text-xs text-slate-500 mt-1">WebRTC video rooms & digital Rx vaults.</p>
+                </a>
+
+                <a href="logistics-fleet.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-wider">Module 15</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-cyan-600 transition">Fleet & Dispatch</h4>
+                    <p class="text-xs text-slate-500 mt-1">GPS rider tracking & OTP delivery confirmation.</p>
+                </a>
+
+                <a href="fintech-escrow.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-wider">Module 16</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-cyan-600 transition">FinTech & Escrow Vault</h4>
+                    <p class="text-xs text-slate-500 mt-1">Multi-currency settlements & VAT splitting.</p>
+                </a>
+
+                <a href="ai-predictive.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-wider">Module 17</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-cyan-600 transition">AI Predictive Health</h4>
+                    <p class="text-xs text-slate-500 mt-1">Symptom risk checking & inventory AI forecast.</p>
+                </a>
+
+                <a href="growth-marketing.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-wider">Module 18</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-cyan-600 transition">SEO & Growth Hacking</h4>
+                    <p class="text-xs text-slate-500 mt-1">Meta CAPI, OG tags & flash sale countdowns.</p>
+                </a>
+
+                <a href="security-compliance.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-wider">Module 19</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-cyan-600 transition">Security & RLS Governance</h4>
+                    <p class="text-xs text-slate-500 mt-1">RBAC controls, GDPR privacy & audit logs.</p>
+                </a>
+
+                <a href="admin-command-center.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-500 transition group">
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-wider">Module 20</span>
+                    <h4 class="font-bold text-sm text-slate-800 mt-1 group-hover:text-cyan-600 transition">Super Admin Command</h4>
+                    <p class="text-xs text-slate-500 mt-1">Global hub scale & server uptime monitoring.</p>
+                </a>
+
             </div>
-        </section>
-
-        <!-- Live Product Catalog Grid (Right Column) -->
-        <section class="lg:col-span-2">
-            <h2 class="text-xl font-semibold mb-4 text-slate-800">Live Product Catalog</h2>
-            <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Dynamic products will load here -->
-                <p class="text-slate-500 italic">Loading marketplace catalog...</p>
-            </div>
-        </section>
+        </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-4 text-center text-sm text-slate-500 mt-auto">
-        &copy; 2026 MedixPulse-BD-1. Enterprise Global Healthcare Marketplace.
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        &copy; 2026 MedixPulse-BD-1. Enterprise Healthcare Ecosystem. All rights reserved.
     </footer>
 
-    <!-- Application Script with Verified Credentials -->
-    <script>
-        // Supabase Verified Credentials Configuration
-        const SUPABASE_URL = 'https://cirdudmahqtqlfsadmgx.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcmR1ZG1haHF0cWxmc2FkbWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzNTI0MTcsImV4cCI6MjEwNjkyODQxN30.J4UymGx76kX8MwVa5re5TwLkSbIopzdV4_jYe9MXr7Q';
-        
-        const { createClient } = supabase;
-        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        const productForm = document.getElementById('product-form');
-        const vendorForm = document.getElementById('vendor-form');
-        const submitBtn = document.getElementById('submit-btn');
-        const errorBanner = document.getElementById('error-banner');
-        const successBanner = document.getElementById('success-banner');
-        const vendorSuccess = document.getElementById('vendor-success');
-        const catalogGrid = document.getElementById('catalog-grid');
-        const vendorUuidInput = document.getElementById('vendor-uuid');
-
-        // Auto-generate a default or session Vendor UUID if empty
-        if(!localStorage.getItem('medix_vendor_uuid')) {
-            localStorage.setItem('medix_vendor_uuid', 'v-' + Math.random().toString(36).substring(2, 10));
-        }
-        vendorUuidInput.value = localStorage.getItem('medix_vendor_uuid');
-
-        function showError(msg) {
-            errorBanner.textContent = msg;
-            errorBanner.classList.remove('hidden');
-            successBanner.classList.add('hidden');
-        }
-
-        function showSuccess(msg) {
-            successBanner.textContent = msg;
-            successBanner.classList.remove('hidden');
-            errorBanner.classList.add('hidden');
-        }
-
-        // Handle Vendor Profile Registration
-        vendorForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('owner-name').value.trim();
-            const address = document.getElementById('owner-address').value.trim();
-            const vendorUuid = vendorUuidInput.value;
-
-            try {
-                // Upsert vendor info into 'vendors' table if exists
-                const { error } = await _supabase
-                    .from('vendors')
-                    .upsert([{ uuid: vendorUuid, name: name, address: address }], { onConflict: 'uuid' });
-
-                if (error) {
-                    console.warn('Vendor table sync notice:', error.message);
-                }
-
-                localStorage.setItem('medix_owner_name', name);
-                localStorage.setItem('medix_owner_address', address);
-                
-                vendorSuccess.textContent = `Vendor profile saved successfully! ID: ${vendorUuid}`;
-                vendorSuccess.classList.remove('hidden');
-            } catch (err) {
-                console.error(err);
-            }
-        });
-
-        // Fetch and Render Products with Owner Info
-        async function loadCatalog() {
-            try {
-                const { data, error } = await _supabase
-                    .from('products')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    catalogGrid.innerHTML = '<p class="text-slate-500 col-span-2">No products available in marketplace yet.</p>';
-                    return;
-                }
-
-                catalogGrid.innerHTML = data.map(product => `
-                    <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col justify-between">
-                        <div class="h-48 bg-slate-100 overflow-hidden">
-                            <img src="${product.image_url || 'https://via.placeholder.com/300'}" alt="${product.name}" class="w-full h-full object-cover">
-                        </div>
-                        <div class="p-4 flex flex-col flex-grow">
-                            <h3 class="font-bold text-lg text-slate-800 mb-1">${product.name}</h3>
-                            <p class="text-indigo-600 font-semibold mb-2">$${Number(product.price).toFixed(2)}</p>
-                            <p class="text-slate-600 text-sm mb-4 flex-grow">${product.description || 'No description provided.'}</p>
-                            <div class="border-t pt-3 text-xs text-slate-500 space-y-1">
-                                <div class="flex justify-between">
-                                    <span>Stock: <strong>${product.stock}</strong></span>
-                                    <span>ID: ${product.vendor_uuid ? product.vendor_uuid.slice(0,8) + '...' : 'N/A'}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (err) {
-                console.error('Catalog load error:', err.message);
-                catalogGrid.innerHTML = '<p class="text-red-500 text-sm col-span-2">Failed to load live product catalog.</p>';
-            }
-        }
-
-        // Handle Product Submission Pipeline
-        productForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Uploading...';
-
-            try {
-                const vendorUuid = vendorUuidInput.value.trim();
-                const name = document.getElementById('product-name').value.trim();
-                const price = parseFloat(document.getElementById('product-price').value);
-                const stock = parseInt(document.getElementById('product-stock').value);
-                const description = document.getElementById('product-desc').value.trim();
-                const imageFile = document.getElementById('product-image').files[0];
-
-                let imageUrl = '';
-
-                if (imageFile) {
-                    const fileExt = imageFile.name.split('.').pop();
-                    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-                    
-                    const { data: uploadData, error: uploadError } = await _supabase.storage
-                        .from('product-images')
-                        .upload(fileName, imageFile);
-
-                    if (uploadError) throw uploadError;
-
-                    const { data: publicUrlData } = _supabase.storage
-                        .from('product-images')
-                        .getPublicUrl(fileName);
-
-                    imageUrl = publicUrlData.publicUrl;
-                }
-
-                const { error: dbError } = await _supabase
-                    .from('products')
-                    .insert([{
-                        vendor_uuid: vendorUuid,
-                        name,
-                        price,
-                        stock,
-                        description,
-                        image_url: imageUrl
-                    }]);
-
-                if (dbError) throw dbError;
-
-                showSuccess('Product and image uploaded successfully!');
-                productForm.reset();
-                vendorUuidInput.value = localStorage.getItem('medix_vendor_uuid'); // Keep UUID
-                loadCatalog();
-
-                if (typeof fbq === 'function') {
-                    fbq('track', 'AddProduct', { productName: name, price: price });
-                }
-
-            } catch (err) {
-                console.error(err);
-                showError('Error: ' + err.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Upload Product & Image';
-            }
-        });
-
-        loadCatalog();
-    </script>
 </body>
 </html>
