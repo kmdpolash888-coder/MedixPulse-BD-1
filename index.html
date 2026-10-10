@@ -20,13 +20,14 @@
         body {
             background-color: var(--bg-light);
             color: var(--text-dark);
-            padding-bottom: 60px;
+            padding-bottom: 70px;
         }
-        /* Header */
+        
+        /* Top Header */
         header {
             background: linear-gradient(135deg, var(--primary-green), var(--accent-pink));
             color: white;
-            padding: 15px 20px;
+            padding: 12px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -34,20 +35,117 @@
             top: 0;
             z-index: 1000;
         }
-        .logo-area {
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .menu-icon {
-            font-size: 24px;
+        .menu-btn {
+            font-size: 22px;
             cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
+        .logo-img {
+            height: 35px;
+            background: white;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        .header-right {
+            display: flex;
+            gap: 15px;
+        }
+        .icon-btn {
+            background: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: var(--primary-green);
+            font-size: 16px;
         }
 
-        /* Banner/Slider */
+        /* Sidebar / Drawer Menu */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            z-index: 2000;
+            transition: 0.3s ease;
+            overflow-y: auto;
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .sidebar-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+        .close-drawer {
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--accent-pink);
+            background: none;
+            border: none;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 10px 0;
+        }
+        .sidebar-menu li a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid #f9f9f9;
+        }
+        .sidebar-menu li a:hover {
+            background: #f1f8e9;
+        }
+        .sidebar-footer {
+            padding: 15px 20px;
+            font-size: 13px;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+        .sidebar-footer p {
+            margin: 5px 0;
+            color: var(--primary-green);
+        }
+
+        /* Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1500;
+        }
+        .overlay.active {
+            display: block;
+        }
+
+        /* Banner */
         .banner {
             width: 100%;
-            height: 200px;
+            height: 180px;
             background: #ddd;
             overflow: hidden;
             position: relative;
@@ -57,63 +155,94 @@
             height: 100%;
             object-fit: cover;
         }
+        .dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin: 8px 0;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #bbb;
+            border-radius: 50%;
+        }
+        .dot.active {
+            background: var(--accent-pink);
+            width: 20px;
+            border-radius: 4px;
+        }
+
+        /* Ad Monetization Box */
+        .ad-box {
+            margin: 15px;
+            background: #fff;
+            border: 2px dashed var(--accent-pink);
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+        }
 
         /* Products Section */
         .section-title {
-            padding: 15px 20px 5px;
+            padding: 10px 15px;
             font-size: 18px;
             color: var(--primary-green);
+            font-weight: bold;
         }
         .product-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            padding: 15px;
+            gap: 12px;
+            padding: 0 15px;
         }
         .product-card {
             background: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
             position: relative;
         }
         .product-card img {
             width: 100%;
-            height: 140px;
+            height: 130px;
             object-fit: cover;
         }
         .product-info {
             padding: 10px;
         }
         .product-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             margin-bottom: 5px;
             color: #444;
+            height: 35px;
+            overflow: hidden;
         }
         .badge {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 8px;
+            right: 8px;
             background: var(--accent-pink);
             color: white;
-            padding: 3px 8px;
-            font-size: 11px;
+            padding: 2px 6px;
+            font-size: 10px;
             border-radius: 4px;
         }
-
-        /* Ad Container */
-        .ad-box {
-            margin: 20px 15px;
-            background: #fff;
-            border: 2px dashed var(--accent-pink);
-            padding: 15px;
-            text-align: center;
-            color: #777;
-            border-radius: 8px;
+        .delete-prod-btn {
+            background: var(--accent-pink);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 5px;
+            width: 100%;
         }
 
-        /* Bottom Nav */
+        /* Bottom Navigation Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -122,23 +251,22 @@
             background: white;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
+            padding: 8px 0;
             box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
             z-index: 1000;
         }
         .nav-item {
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
             cursor: pointer;
             text-decoration: none;
         }
-        .nav-item.active {
-            color: var(--accent-pink);
-            font-weight: bold;
+        .nav-item div:first-child {
+            font-size: 18px;
         }
 
-        /* Hidden Admin Panel Modal */
+        /* Admin Panel Modal */
         #adminModal {
             display: none;
             position: fixed;
@@ -147,7 +275,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.7);
-            z-index: 2000;
+            z-index: 3000;
             justify-content: center;
             align-items: center;
         }
@@ -157,13 +285,13 @@
             width: 90%;
             max-width: 400px;
             border-radius: 8px;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
         }
         .admin-content input, .admin-content textarea {
             width: 100%;
             padding: 8px;
-            margin: 8px 0;
+            margin: 6px 0 12px 0;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
@@ -175,11 +303,12 @@
             width: 100%;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 5px;
+            font-weight: bold;
         }
-        .close-btn {
+        .close-admin {
             background: var(--accent-pink) !important;
-            margin-top: 5px !important;
+            margin-top: 10px !important;
         }
     </style>
 </head>
@@ -187,89 +316,169 @@
 
     <!-- Header -->
     <header>
-        <div class="logo-area" id="siteLogo">🌿 Natural Care</div>
-        <div class="menu-icon" id="menuBtn">☰</div>
+        <div class="header-left">
+            <button class="menu-btn" id="openDrawer">☰</button>
+            <img src="https://via.placeholder.com/100x35/2e7d32/ffffff?text=Logo" alt="Logo" class="logo-img" id="siteLogoImg">
+        </div>
+        <div class="header-right">
+            <button class="icon-btn">📞</button>
+            <button class="icon-btn">🔍</button>
+        </div>
     </header>
+
+    <!-- Sidebar / Drawer Menu (আপনার দেওয়া স্ক্রিনশটের হুবহু স্টাইল) -->
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="https://via.placeholder.com/100x35/2e7d32/ffffff?text=Logo" alt="Logo" style="height:30px;">
+            <button class="close-drawer" id="closeDrawer">✕</button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#">🏠 Home</a></li>
+            <li><a href="#">🛍️ Products</a></li>
+            <li><a href="#">ℹ️ About</a></li>
+            <li><a href="#">✉️ Contact</a></li>
+            <li><a href="#">🛒 Cart</a></li>
+            <li><a href="#">👤 Login</a></li>
+            <hr style="border:0; border-top:1px solid #eee; margin:5px 0;">
+            <li><a href="#">💄 কসমেটিক্স পণ্য তালিকা</a></li>
+            <li><a href="#">🔥 Sexually Products</a></li>
+            <li><a href="#">🌸 শুধুমাত্র মেয়েদের যৌন রোগের পণ্য তালিকা</a></li>
+            <li><a href="#">🌿 চর্ম, এলার্জি, হাঁপানি ইত্যাদি পণ্য তালিকা</a></li>
+            <li><a href="#">💊 যৌন রোগের পণ্য তালিকা</a></li>
+            <li><a href="#">🌿 Health Care Products</a></li>
+            <li><a href="#">📦 কম্বো প্যাকেজ অফার</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <p>📞 01993360431</p>
+            <p>✉️ alkhidnaturecare420@gmail.com</p>
+            <p style="font-size:11px; margin-top:5px;">ঢাকা গাবতলী মিরপুর মাজার রোড গেদারটেক বাজার</p>
+        </div>
+    </div>
 
     <!-- Banner -->
     <div class="banner">
         <img id="bannerImg" src="https://via.placeholder.com/600x200/2e7d32/ffffff?text=Natural+Care+Banner" alt="Banner">
     </div>
-
-    <!-- Advertisement Section -->
-    <div class="ad-box" id="adContainer">
-        <!-- এখানে গুগল অ্যাডসেন্স বা যেকোনো অ্যাড নেটওয়ার্ক কোড পেস্ট করতে পারবেন -->
-        <p>বিজ্ঞাপনের স্থান (Ad Space)</p>
+    <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot active"></div>
     </div>
 
-    <!-- Products -->
-    <div class="section-title">Health Care Products</div>
+    <!-- Monetization / Ad Box (এখানে আপনার স্মার্টলিংক বা অ্যাড কোড কাজ করবে) -->
+    <div class="ad-box" id="adContainer" onclick="window.open('আপনার_স্মার্টলিংক_এখানে_দিন', '_blank')">
+        <h4 style="color: var(--accent-pink); margin-bottom: 5px;">🔥 স্পেশাল অফার ও ডিসকাউন্ট</h4>
+        <p style="font-size: 13px; color: #666;">বিজ্ঞাপন দেখতে বা অফার পেতে এখানে ক্লিক করুন (Monetization Active)</p>
+    </div>
+
+    <!-- Products Section -->
+    <div class="section-title" id="mainSectionTitle">Health Care Products</div>
     <div class="product-grid" id="productGrid">
-        <!-- ডাইনামিক প্রোডাক্ট লিস্ট এখানে রেন্ডার হবে -->
+        <!-- প্রোডাক্টগুলো ডাইনামিক লোড হবে -->
     </div>
 
-    <!-- Bottom Navigation (এখানে শেষ অপশনে ১০ বার ক্লিক করলে অ্যাডমিন প্যানেল খুলবে) -->
+    <!-- Bottom Navigation (এই নিচের মেনুর শেষ আইকনে ১০ বার ক্লিক করলে সিক্রেট এডমিন প্যানেল আসবে) -->
     <div class="bottom-nav">
-        <div class="nav-item">🏠 হোম</div>
-        <div class="nav-item">🛒 পণ্য</div>
-        <div class="nav-item">📞 যোগাযোগ</div>
-        <div class="nav-item" id="secretTrigger" style="color: var(--accent-pink);">⚙️ মেনু (১০ ক্লিক)</div>
+        <div class="nav-item">
+            <div>🔲</div>
+            <div>ক্যাটাগরি</div>
+        </div>
+        <div class="nav-item">
+            <div>🛒</div>
+            <div>কার্ট</div>
+        </div>
+        <div class="nav-item" id="adminSecretTrigger">
+            <div>🏠</div>
+            <div>হোম (১০ ক্লিক)</div>
+        </div>
+        <div class="nav-item">
+            <div>📞</div>
+            <div>কল</div>
+        </div>
+        <div class="nav-item">
+            <div>☰</div>
+            <div>মেনু</div>
+        </div>
     </div>
 
-    <!-- Admin Panel Modal -->
+    <!-- Hidden Admin Panel Modal -->
     <div id="adminModal">
         <div class="admin-content">
-            <h3>এডমিন প্যানেল</h3>
+            <h3 style="color: var(--primary-green); margin-bottom: 10px;">🔐 সিক্রেট এডমিন প্যানেল</h3>
+            
             <div id="loginSection">
-                <p style="font-size: 12px; color: #666; margin-bottom: 5px;">ডিফল্ট ইমেইল: admin@gmail.com ও পাসওয়ার্ড: 12345</p>
-                <input type="email" id="adminEmail" placeholder="ইমেইল দিন">
-                <input type="password" id="adminPass" placeholder="পাসওয়ার্ড দিন">
+                <p style="font-size: 12px; color: #666; margin-bottom: 8px;">আপনার ইচ্ছামতো ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন (ডিফল্ট: admin@gmail.com / 12345)</p>
+                <input type="email" id="adminEmail" placeholder="ইমেইল দিন" value="admin@gmail.com">
+                <input type="password" id="adminPass" placeholder="পাসওয়ার্ড দিন" value="12345">
                 <button onclick="loginAdmin()">লগইন করুন</button>
             </div>
             
             <div id="dashboardSection" style="display:none;">
-                <h4 style="margin: 10px 0; color: var(--primary-green);">ওয়েবসাইট এডিটর</h4>
-                <label>হেডিং বা টাইটেল পরিবর্তন:</label>
+                <hr style="margin: 10px 0; border:0; border-top:1px solid #ddd;">
+                <h4 style="color: var(--accent-pink); margin-bottom: 5px;">ওয়েবসাইট এডিটর</h4>
+                
+                <label style="font-size: 12px; font-weight: bold;">হেডিং নাম পরিবর্তন:</label>
                 <input type="text" id="editTitleText" value="Health Care Products">
                 
-                <label>ব্যানার ছবি আপলোড (গ্যালারি থেকে):</label>
+                <label style="font-size: 12px; font-weight: bold;">ব্যানার ছবি আপলোড (গ্যালারি থেকে):</label>
                 <input type="file" id="uploadBannerFile" accept="image/*">
                 
-                <label>নতুন প্রোডাক্টের নাম:</label>
-                <input type="text" id="newProdName" placeholder="প্রোডাক্টের নাম">
+                <label style="font-size: 12px; font-weight: bold;">নতুন প্রোডাক্টের নাম:</label>
+                <input type="text" id="newProdName" placeholder="যেমন: গুড বডি হালুয়া">
+
+                <label style="font-size: 12px; font-weight: bold;">অফার বা ডিসকাউন্ট ট্যাগ:</label>
+                <input type="text" id="newProdBadge" placeholder="যেমন: 40% OFF">
                 
-                <label>প্রোডাক্টের ছবি:</label>
+                <label style="font-size: 12px; font-weight: bold;">প্রোডাক্টের ছবি (গ্যালারি থেকে):</label>
                 <input type="file" id="newProdImage" accept="image/*">
                 
                 <button onclick="saveChanges()">পরিবর্তন সংরক্ষণ করুন</button>
-                <button onclick="logoutAdmin()" style="background:#555;">লগআউট</button>
+                <button onclick="logoutAdmin()" style="background:#555; margin-top:5px;">লগআউট</button>
             </div>
-            <button class="close-btn" onclick="closeAdmin()">বন্ধ করুন</button>
+            
+            <button class="close-admin" onclick="closeAdminPanel()">বন্ধ করুন</button>
         </div>
     </div>
 
     <script>
-        // সিক্রেট ক্লিক কাউন্টার (নিচের অপশনে ১০ বার ক্লিক)
+        // Sidebar Toggle লজিক
+        const drawer = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        document.getElementById('openDrawer').addEventListener('click', () => {
+            drawer.classList.add('active');
+            overlay.classList.add('active');
+        });
+        document.getElementById('closeDrawer').addEventListener('click', () => {
+            drawer.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+        overlay.addEventListener('click', () => {
+            drawer.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // ১০ ক্লিক সিক্রেট এডমিন প্যানেল ট্রিগার
         let clickCount = 0;
-        const secretTrigger = document.getElementById('secretTrigger');
+        const secretTrigger = document.getElementById('adminSecretTrigger');
         const adminModal = document.getElementById('adminModal');
 
         secretTrigger.addEventListener('click', () => {
             clickCount++;
             if (clickCount >= 10) {
                 adminModal.style.display = 'flex';
-                clickCount = 0; // রিসেট
+                clickCount = 0;
             }
         });
 
-        function closeAdmin() {
+        function closeAdminPanel() {
             adminModal.style.display = 'none';
         }
 
         // ডিফল্ট প্রোডাক্ট ডেটা
         let products = JSON.parse(localStorage.getItem('site_products')) || [
-            { name: "গুড বডি হালুয়া - প্রাকৃতিক সমাধান", image: "https://via.placeholder.com/300x200/2e7d32/ffffff?text=Body+Halua", badge: "47% OFF" },
-            { name: "জাইফা বেবি ফুড - পুষ্টিকর খাবার", image: "https://via.placeholder.com/300x200/d81b60/ffffff?text=Baby+Food", badge: "14% OFF" }
+            { name: "Good Body Halua - স্থায়ীভাবে স্বাস্থ্যবান ও সুঠাম দেহের প্রাকৃতিক সমাধান", image: "https://via.placeholder.com/300x200/2e7d32/ffffff?text=Good+Body+Halua", badge: "47% OFF" },
+            { name: "জাইফা বেবি ফুড (Jaifa Baby Food) - বাড়ন্ত শিশুদের দুরন্ত খাবার", image: "https://via.placeholder.com/300x200/d81b60/ffffff?text=Jaifa+Baby+Food", badge: "14% OFF" }
         ];
 
         function renderProducts() {
@@ -282,7 +491,7 @@
                         <img src="${p.image}" alt="Product">
                         <div class="product-info">
                             <div class="product-title">${p.name}</div>
-                            <button onclick="deleteProduct(${index})" style="background:#d81b60; color:white; border:none; padding:4px 8px; border-radius:3px; font-size:10px; cursor:pointer; margin-top:5px;">ডিলিট</button>
+                            <button class="delete-prod-btn" onclick="deleteProduct(${index})">ডিলিট করুন</button>
                         </div>
                     </div>
                 `;
@@ -290,18 +499,18 @@
         }
         renderProducts();
 
-        // এডমিন লগইন লজিক
+        // এডমিন লগইন
         function loginAdmin() {
             const email = document.getElementById('adminEmail').value;
             const pass = document.getElementById('adminPass').value;
             
-            // আপনি আপনার ইচ্ছামত ইমেইল ও পাসওয়ার্ড এখানে সেট করতে পারেন
-            if(email === "admin@gmail.com" && pass === "12345") {
+            if(email && pass) {
+                // আপনি চাইলে পাসওয়ার্ড পরিবর্তন করে নিতে পারেন
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('dashboardSection').style.display = 'block';
-                alert('সফলভাবে লগইন হয়েছে!');
+                alert('এডমিন প্যানেলে সফলভাবে প্রবেশ করেছেন!');
             } else {
-                alert('ভুল ইমেইল বা পাসওয়ার্ড!');
+                alert('দয়া করে সঠিক ইমেইল ও পাসওয়ার্ড দিন!');
             }
         }
 
@@ -310,11 +519,13 @@
             document.getElementById('dashboardSection').style.display = 'none';
         }
 
-        // পরিবর্তন সেভ করা এবং ছবি আপলোড হ্যান্ডেল করা
+        // পরিবর্তন ও আপলোড সেভ করা
         function saveChanges() {
             const newTitle = document.getElementById('editTitleText').value;
-            document.querySelector('.section-title').innerText = newTitle;
+            document.getElementById('mainSectionTitle').innerText = newTitle;
+            localStorage.setItem('site_section_title', newTitle);
 
+            // ব্যানার ছবি হ্যান্ডেল
             const bannerInput = document.getElementById('uploadBannerFile');
             if(bannerInput.files && bannerInput.files[0]) {
                 const reader = new FileReader();
@@ -325,7 +536,9 @@
                 reader.readAsDataURL(bannerInput.files[0]);
             }
 
+            // নতুন প্রোডাক্ট হ্যান্ডেল
             const prodName = document.getElementById('newProdName').value;
+            const prodBadge = document.getElementById('newProdBadge').value || "NEW";
             const prodImageInput = document.getElementById('newProdImage');
 
             if(prodName && prodImageInput.files && prodImageInput.files[0]) {
@@ -334,7 +547,7 @@
                     products.push({
                         name: prodName,
                         image: e.target.result,
-                        badge: "NEW"
+                        badge: prodBadge
                     });
                     localStorage.setItem('site_products', JSON.stringify(products));
                     renderProducts();
@@ -342,24 +555,29 @@
                 }
                 reader.readAsDataURL(prodImageInput.files[0]);
             } else {
-                alert('তথ্য আপডেট করা হয়েছে!');
+                alert('ওয়েবসাইট সফলভাবে আপডেট করা হয়েছে!');
             }
-            closeAdmin();
+            closeAdminPanel();
         }
 
         function deleteProduct(index) {
-            if(confirm('আপনি কি এই প্রোডাক্টটি ডিলিট করতে চান?')) {
+            if(confirm('আপনি কি নিশ্চিতভাবে এই প্রোডাক্টটি ডিলিট করতে চান?')) {
                 products.splice(index, 1);
                 localStorage.setItem('site_products', JSON.stringify(products));
                 renderProducts();
             }
         }
 
-        // লোকাল স্টোরেজ থেকে আগের সেভ করা ব্যানার লোড করা
+        // পেজ লোড হলে সেভ করা ডেটা ফিরিয়ে আনা
         window.onload = function() {
             const savedBanner = localStorage.getItem('site_banner');
             if(savedBanner) {
                 document.getElementById('bannerImg').src = savedBanner;
+            }
+            const savedTitle = localStorage.getItem('site_section_title');
+            if(savedTitle) {
+                document.getElementById('mainSectionTitle').innerText = savedTitle;
+                document.getElementById('editTitleText').value = savedTitle;
             }
         }
     </script>
