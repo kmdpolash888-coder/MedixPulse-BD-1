@@ -326,7 +326,7 @@
         </div>
     </header>
 
-    <!-- Sidebar / Drawer Menu (আপনার দেওয়া স্ক্রিনশটের হুবহু স্টাইল) -->
+    <!-- Sidebar / Drawer Menu -->
     <div class="overlay" id="overlay"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -350,7 +350,7 @@
             <li><a href="#">📦 কম্বো প্যাকেজ অফার</a></li>
         </ul>
         <div class="sidebar-footer">
-            <p>📞 01993360431</p>
+            <p>📞 01910-532834</p>
             <p>✉️ alkhidnaturecare420@gmail.com</p>
             <p style="font-size:11px; margin-top:5px;">ঢাকা গাবতলী মিরপুর মাজার রোড গেদারটেক বাজার</p>
         </div>
@@ -366,7 +366,7 @@
         <div class="dot active"></div>
     </div>
 
-    <!-- Monetization / Ad Box (এখানে আপনার স্মার্টলিংক বা অ্যাড কোড কাজ করবে) -->
+    <!-- Monetization / Ad Box (এখানে আপনার স্মার্টলিংক বা অ্যাড কোড বসিয়ে ইনকাম করতে পারবেন) -->
     <div class="ad-box" id="adContainer" onclick="window.open('আপনার_স্মার্টলিংক_এখানে_দিন', '_blank')">
         <h4 style="color: var(--accent-pink); margin-bottom: 5px;">🔥 স্পেশাল অফার ও ডিসকাউন্ট</h4>
         <p style="font-size: 13px; color: #666;">বিজ্ঞাপন দেখতে বা অফার পেতে এখানে ক্লিক করুন (Monetization Active)</p>
@@ -378,7 +378,7 @@
         <!-- প্রোডাক্টগুলো ডাইনামিক লোড হবে -->
     </div>
 
-    <!-- Bottom Navigation (এই নিচের মেনুর শেষ আইকনে ১০ বার ক্লিক করলে সিক্রেট এডমিন প্যানেল আসবে) -->
+    <!-- Bottom Navigation (এই নিচের মেনুর হোম অপশনে ১০ বার ক্লিক করলে সিক্রেট এডমিন প্যানেল আসবে) -->
     <div class="bottom-nav">
         <div class="nav-item">
             <div>🔲</div>
@@ -505,7 +505,6 @@
             const pass = document.getElementById('adminPass').value;
             
             if(email && pass) {
-                // আপনি চাইলে পাসওয়ার্ড পরিবর্তন করে নিতে পারেন
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('dashboardSection').style.display = 'block';
                 alert('এডমিন প্যানেলে সফলভাবে প্রবেশ করেছেন!');
@@ -525,7 +524,6 @@
             document.getElementById('mainSectionTitle').innerText = newTitle;
             localStorage.setItem('site_section_title', newTitle);
 
-            // ব্যানার ছবি হ্যান্ডেল
             const bannerInput = document.getElementById('uploadBannerFile');
             if(bannerInput.files && bannerInput.files[0]) {
                 const reader = new FileReader();
@@ -536,7 +534,6 @@
                 reader.readAsDataURL(bannerInput.files[0]);
             }
 
-            // নতুন প্রোডাক্ট হ্যান্ডেল
             const prodName = document.getElementById('newProdName').value;
             const prodBadge = document.getElementById('newProdBadge').value || "NEW";
             const prodImageInput = document.getElementById('newProdImage');
@@ -568,7 +565,6 @@
             }
         }
 
-        // পেজ লোড হলে সেভ করা ডেটা ফিরিয়ে আনা
         window.onload = function() {
             const savedBanner = localStorage.getItem('site_banner');
             if(savedBanner) {
